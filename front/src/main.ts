@@ -14,6 +14,7 @@ import router from '@/router/router';
 // Components
 import LacenCard from '@/components/layout/LacenCard.vue';
 import LacenBtn from '@/components/layout/LacenBtn.vue';
+import ImageCard from '@/components/ImageCard.vue';
 
 // Creating instance
 const app = createApp(App);
@@ -21,6 +22,7 @@ const app = createApp(App);
 // Components
 app.component('LacenCard', LacenCard);
 app.component('LacenBtn', LacenBtn);
+app.component('ImageCard', ImageCard);
 
 // Store
 const pinia = createPinia();

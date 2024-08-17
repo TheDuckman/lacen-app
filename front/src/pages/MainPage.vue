@@ -57,14 +57,12 @@
           />
         </v-card-text>
         <v-card-actions class="d-flex justify-center">
-          <v-btn
-            color="success"
-            variant="elevated"
-            @click="beginLacen"
+          <LacenBtn
             :disabled="isDisabled"
-          >
-            Let's begin!
-          </v-btn>
+            color="success"
+            text="Let's begin!"
+            @click="beginLacen"
+          />
         </v-card-actions>
       </v-card>
     </template>

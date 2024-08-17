@@ -1,6 +1,4 @@
-<script setup lang="ts">
-  import ImageCard from '@/components/ImageCard.vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <h1>Removing outliers</h1>

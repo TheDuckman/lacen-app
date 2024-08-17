@@ -49,7 +49,7 @@ export const useAppStateStore = defineStore('appStateStore', () => {
     },
     heatmap: {
       title: 'Heatmap',
-      pageName: 'Heatmap',
+      pageName: 'HeatMap',
       current: false,
       done: false,
     },

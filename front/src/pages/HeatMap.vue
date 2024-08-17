@@ -1,11 +1,11 @@
 <script setup lang="ts"></script>
 
 <template>
-  <h1>Creating networks</h1>
+  <h1>Heatmap</h1>
   <v-row dense>
     <v-col cols="12">
       <LacenCard
-        title="Generate network"
+        title="Heatmap"
         :iconNumber="1"
       >
         <v-card-text>
