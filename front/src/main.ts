@@ -8,6 +8,7 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { createPinia } from 'pinia';
 import mitt from 'mitt';
+import { lacenTheme } from './config/vuetify.theme';
 
 // Creating instance
 const app = createApp(App);
@@ -20,7 +21,10 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'lacenTheme',
+    themes: {
+      lacenTheme,
+    },
   },
   icons: {
     defaultSet: 'mdi',
