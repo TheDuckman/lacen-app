@@ -16,7 +16,7 @@
             <v-col cols="6">
               <div class="d-flex flex-column align-center my-5 ml-5">
                 <LacenBtn
-                  block
+                  size="x-large"
                   color="info"
                   icon="mdi-shoe-print"
                   text="Run bootstrap"
@@ -26,7 +26,7 @@
             <v-col cols="6">
               <div class="d-flex flex-column align-center my-5 ml-5">
                 <LacenBtn
-                  block
+                  size="x-large"
                   color="warning"
                   icon="mdi-debug-step-over"
                   text="Skip bootstraping"

@@ -4,6 +4,7 @@ import DataInput from '@/pages/DataInput.vue';
 import RemovingOutliers from '@/pages/RemovingOutliers.vue';
 import PickingThreshold from '@/pages/PickingThreshold.vue';
 import BootStraping from '@/pages/BootStraping.vue';
+import CreatingNetworks from '@/pages/CreatingNetworks.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/bootstraping',
     name: 'BootStraping',
     component: BootStraping,
+  },
+  {
+    path: '/creating-network',
+    name: 'CreatingNetworks',
+    component: CreatingNetworks,
   },
 ];
 
