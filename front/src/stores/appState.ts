@@ -24,7 +24,7 @@ export const useAppStateStore = defineStore('appStateStore', () => {
     },
     bootstraping: {
       title: 'Bootstraping',
-      pageName: 'Bootstraping',
+      pageName: 'BootStraping',
       current: false,
       done: false,
       skipped: false,

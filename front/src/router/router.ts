@@ -3,6 +3,7 @@ import MainPage from '@/pages/MainPage.vue';
 import DataInput from '@/pages/DataInput.vue';
 import RemovingOutliers from '@/pages/RemovingOutliers.vue';
 import PickingThreshold from '@/pages/PickingThreshold.vue';
+import BootStraping from '@/pages/BootStraping.vue';
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/picking-threshold',
     name: 'PickingThreshold',
     component: PickingThreshold,
+  },
+  {
+    path: '/bootstraping',
+    name: 'BootStraping',
+    component: BootStraping,
   },
 ];
 
