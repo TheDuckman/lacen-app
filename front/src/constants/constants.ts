@@ -13,6 +13,16 @@ export const variablesNames = {
   ENRICHEDGRAPH_IMG: 'enrichedGraphImg',
   STACKEDBARPLOT_IMG: 'stackedBarPlotImg',
 };
+export const stepNumbers = {
+  dataInput: 1,
+  removingOutliers: 2,
+  pickingThreshold: 3,
+  bootstraping: 4,
+  creatingNetworks: 5,
+  networkModules: 6,
+  enrichedModules: 7,
+  heatmap: 8,
+};
 
 export const formRules = {
   isNumber: [

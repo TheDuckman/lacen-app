@@ -26,7 +26,7 @@
 
   const stepColor = computed(() => {
     if (props.isComplete && props.currentStep === props.stepNumber)
-      return 'success lighten-3';
+      return 'success';
     if (props.isComplete) return 'success';
     return 'primary';
   });
@@ -53,14 +53,16 @@
         />
         <v-icon
           v-else
-          color="grey"
+          color="secondary"
           class="pb-1"
           size="x-small"
           icon="mdi-circle-outline"
         />
         <span
           :class="
-            filesOk ? 'text-success text-caption' : 'text-grey text-caption'
+            filesOk
+              ? 'text-success text-caption'
+              : 'text-secondary text-caption'
           "
         >
           User data files
@@ -76,7 +78,7 @@
         />
         <v-icon
           v-else
-          color="grey"
+          color="secondary"
           class="pb-1"
           size="x-small"
           icon="mdi-circle-outline"
@@ -85,7 +87,7 @@
           :class="
             annotationOk
               ? 'text-success text-caption'
-              : 'text-grey text-caption'
+              : 'text-secondary text-caption'
           "
         >
           Annotation files

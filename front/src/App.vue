@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
-  import { useStore } from '@/stores/store';
+  import { useUserDataStore } from '@/stores/userData';
   // import { HTTP_STATUS_FOLDER_FOUND } from '@/constants/constants';
   // import useEmitter from '@/composables/useEmitter';
 
@@ -19,7 +19,7 @@
   const isBeginDisabled = computed(() => {
     return !identifier.value || identifier.value.length < 3;
   });
-  const store = useStore();
+  const store = useUserDataStore();
   const begin = ref(false);
   const beginLacen = async () => {
     if (!isBeginDisabled.value) {
@@ -60,8 +60,7 @@
                 <v-text-field
                   v-model="identifier"
                   @keydown.enter="beginLacen"
-                  outlined
-                  dense
+                  variant="outlined"
                   label="My identifier"
                 />
               </v-card-text>

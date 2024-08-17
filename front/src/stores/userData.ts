@@ -3,7 +3,7 @@ import { UserStatusObj } from '@/interface/userStatus.interface';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useStore = defineStore('store', () => {
+export const useUserDataStore = defineStore('userData', () => {
   // Identifier
   const identifier = ref<string>('');
   const setIdentifier = (newVal: string) => {
