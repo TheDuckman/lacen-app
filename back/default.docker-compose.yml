@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  node:
+    container_name: lacen_back_node
+    image: gpato/lacen-app:latest
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - ./lacen.env
+    volumes:
+      - "./saved-files:/opt/app/saved-files"
+  nginx:
+    container_name: lacen_nginx
+    image: nginx:alpine
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - "./front/:/usr/share/nginx/html/"
+      - "./nginx/:/etc/nginx/conf.d/"

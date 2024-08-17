@@ -1,0 +1,8 @@
+# DIR
+node_modules
+saved-files
+
+# FILES
+docker-compose.yml
+.env
+dockerhub-auth.txt
