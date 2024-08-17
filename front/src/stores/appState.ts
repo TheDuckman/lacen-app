@@ -8,7 +8,7 @@ export const useAppStateStore = defineStore('appStateStore', () => {
       title: 'Data input',
       pageName: 'DataInput',
       current: false,
-      done: true,
+      done: false,
     },
     removingOutliers: {
       title: 'Removing outliers',
