@@ -9,9 +9,18 @@ import * as directives from 'vuetify/directives';
 import { createPinia } from 'pinia';
 import mitt from 'mitt';
 import { lacenTheme } from './config/vuetify.theme';
+import router from '@/router/router';
+
+// Components
+import LacenCard from '@/components/layout/LacenCard.vue';
+import LacenBtn from '@/components/layout/LacenBtn.vue';
 
 // Creating instance
 const app = createApp(App);
+
+// Components
+app.component('LacenCard', LacenCard);
+app.component('LacenBtn', LacenBtn);
 
 // Store
 const pinia = createPinia();
@@ -37,4 +46,5 @@ app.config.globalProperties.emitter = emitter;
 
 app.use(vuetify);
 app.use(pinia);
+app.use(router);
 app.mount('#app');

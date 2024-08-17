@@ -8,7 +8,7 @@
   >
     <v-app-bar-title>
       <v-icon
-        icon="mdi-graph"
+        icon="mdi-graph-outline"
         class="mr-5"
       />
       <b>LACEN</b> - <b>L</b>ong non-coding <b>A</b>nnotation by
