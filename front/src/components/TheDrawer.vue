@@ -19,6 +19,15 @@
     }
     return 'Pending';
   };
+  const stepColor = (step: StepData) => {
+    if (step.done) {
+      return 'success';
+    }
+    if (currentRoute.value === step.pageName) {
+      return 'info';
+    }
+    return 'secondary';
+  };
 
   const goToRoute = (pageName: string) => {
     router.push({
@@ -28,7 +37,9 @@
   const currentRoute = computed(() => {
     return route.name;
   });
+
   const drawerVisible = ref(false);
+
   watch(currentRoute, () => {
     if (currentRoute.value === 'MainPage') {
       drawerVisible.value = false;
@@ -47,15 +58,13 @@
         :active="currentRoute === step.pageName"
         @click="goToRoute(step.pageName)"
       >
-        <v-list-item-title
-          :class="step.done ? 'text-success' : 'text-secondary'"
-        >
+        <v-list-item-title :class="`text-${stepColor(step)}`">
           {{ step.title }}
         </v-list-item-title>
         <v-list-item-subtitle> {{ stepSubtitle(step) }} </v-list-item-subtitle>
         <template v-slot:prepend>
           <v-avatar
-            :color="step.done ? 'success' : 'secondary'"
+            :color="stepColor(step)"
             size="30"
           >
             <v-icon

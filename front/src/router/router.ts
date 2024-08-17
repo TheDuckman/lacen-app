@@ -5,6 +5,7 @@ import RemovingOutliers from '@/pages/RemovingOutliers.vue';
 import PickingThreshold from '@/pages/PickingThreshold.vue';
 import BootStraping from '@/pages/BootStraping.vue';
 import CreatingNetworks from '@/pages/CreatingNetworks.vue';
+import NetworkModules from '@/pages/NetworkModules.vue';
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: '/creating-network',
     name: 'CreatingNetworks',
     component: CreatingNetworks,
+  },
+  {
+    path: '/creating-network',
+    name: 'NetworkModules',
+    component: NetworkModules,
   },
 ];
 

@@ -35,6 +35,7 @@
           </div>
         </div>
       </v-img>
+      <slot name="bottom"> </slot>
     </v-card-text>
   </LacenCard>
 </template>
