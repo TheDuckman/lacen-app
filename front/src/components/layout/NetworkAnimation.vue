@@ -2,13 +2,11 @@
 <template>
   <div
     id="large-header"
-    class="large-header"
+    v-show="showAnimation"
   >
-    <canvas id="demo-canvas"></canvas>
-    <div class="main-title">
-      <slot></slot>
-    </div>
+    <canvas id="demo-canvas"> </canvas>
   </div>
+  <slot></slot>
 </template>
 
 <script lang="ts" setup>
@@ -16,12 +14,18 @@
   import TweenLite from 'gsap/all';
   import Circ from 'gsap/all';
   import { Circle, Point } from '@/interface/point.interface';
-  import { draw, getDistance } from '../utils/animation.utils';
+  import { draw, getDistance } from '@/utils/animation.utils';
+  defineProps({
+    showAnimation: {
+      type: Boolean,
+      default: true,
+    },
+  });
 
   const width = ref();
   const height = ref();
   const heightOffset = ref();
-  const largeHeader = ref();
+  // const largeHeader = ref();
   const canvas = ref();
   const ctx = ref();
   const points = ref<Point[]>([]);
@@ -30,11 +34,7 @@
 
   // Init functions
   const initHeader = () => {
-    const bodyRect = document.body.getBoundingClientRect();
-    const divRect = document
-      .getElementById('large-header')
-      ?.getBoundingClientRect();
-    heightOffset.value = divRect ? divRect.top - bodyRect.top : null;
+    heightOffset.value = null;
     width.value = window.innerWidth;
     height.value = window.innerHeight;
     target.value = {
@@ -43,9 +43,6 @@
       originX: width.value / 2,
       originY: height.value / 2,
     };
-
-    largeHeader.value = document.getElementById('large-header');
-    largeHeader.value.style.height = height.value + 'px';
 
     canvas.value = document.getElementById('demo-canvas');
     canvas.value.width = width.value;
@@ -206,7 +203,6 @@
   const resize = () => {
     width.value = window.innerWidth;
     height.value = window.innerHeight;
-    largeHeader.value.style.height = `${height.value}px`;
     canvas.value.width = width.value;
     canvas.value.height = height.value;
   };
@@ -219,6 +215,8 @@
   };
 
   onMounted(() => {
+    console.log('mounted animation');
+
     initHeader();
     initAnimation();
     addListeners();
@@ -227,42 +225,15 @@
 
 <style scoped>
   /* Header */
-  .large-header {
-    position: relative;
+  #large-header {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     background: #fff;
     overflow: hidden;
     background-size: cover;
     background-position: center center;
-    z-index: 1;
-  }
-
-  .main-title {
-    position: absolute;
-    margin: 0;
-    margin-top: 70px;
-    padding: 0;
-    color: #154d80;
-    text-align: center;
-    top: 20%;
-    left: 50%;
-    -webkit-transform: translate3d(-50%, -50%, 0);
-    transform: translate3d(-50%, -50%, 0);
-  }
-
-  .demo-1 .main-title {
-    text-transform: uppercase;
-    font-size: 4.2em;
-    letter-spacing: 0.1em;
-  }
-
-  .main-title .thin {
-    font-weight: 200;
-  }
-
-  @media only screen and (max-width: 768px) {
-    .demo-1 .main-title {
-      font-size: 3em;
-    }
+    z-index: 0;
   }
 </style>

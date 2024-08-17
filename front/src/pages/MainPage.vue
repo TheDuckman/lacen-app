@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import TheNetworkAnimation from '@/components/TheNetworkAnimation.vue';
   import { useUserDataStore } from '@/stores/userData';
   import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -26,16 +25,21 @@
 </script>
 
 <template>
-  <TheNetworkAnimation>
-    <template #default>
-      <h1 class="mt-10">Welcome to LACEN</h1>
-      <h3>Long non-coding Annotation by Co-Expression Networks</h3>
+  <v-row>
+    <v-col
+      cols="8"
+      class="offset-2"
+    >
       <v-card
-        class="mt-5"
-        outlined
-        style="opacity: 0.9"
+        class="mt-8"
+        variant="flat"
+        style="opacity: 0.9; border: 1px gray solid"
       >
-        <v-card-text class="body-1">
+        <v-card-title class="text-center">
+          <h1>Welcome to LACEN</h1>
+          <h3>Long non-coding Annotation by Co-Expression Networks</h3>
+        </v-card-title>
+        <v-card-text class="text-body-1">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -60,11 +64,12 @@
           <LacenBtn
             :disabled="isDisabled"
             color="success"
+            size="large"
             text="Let's begin!"
             @click="beginLacen"
           />
         </v-card-actions>
       </v-card>
-    </template>
-  </TheNetworkAnimation>
+    </v-col>
+  </v-row>
 </template>
