@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
 import fs from "fs";
 import path from "path";
 import HttpStatus from "http-status-codes";

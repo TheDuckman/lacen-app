@@ -1,5 +1,4 @@
 /* eslint-disable prefer-rest-params */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from "express";
 import { createLogger, format, transports } from "winston";
 
