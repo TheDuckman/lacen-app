@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import requester from '@/api/requester';
   import useEmitter from '@/composables/useEmitter';
-  import { annotationTypes } from '@/constants/ui.constants';
+  import { annotationTypes, ToastTypes } from '@/constants/ui.constants';
   import { computed, ref } from 'vue';
 
   // Emitter
@@ -26,9 +26,9 @@
     try {
       await requester.uploadDataFiles(formData);
       // this.$root.$emit('new-gui-output', res);
-      emitter.emit('toastSuccess', 'Upload successful');
+      emitter.emit(ToastTypes.SUCCESS, 'Upload successful');
     } catch (error) {
-      emitter.emit('toastError', 'Ops...');
+      emitter.emit(ToastTypes.ERROR, 'Ops...');
     } finally {
       loading.value = false;
     }
@@ -48,9 +48,9 @@
     loading.value = true;
     try {
       await requester.uploadAnnotationFile(formData);
-      emitter.emit('toastSuccess', 'Upload successful');
+      emitter.emit(ToastTypes.SUCCESS, 'Upload successful');
     } catch (error) {
-      emitter.emit('toastError', 'Ops...');
+      emitter.emit(ToastTypes.ERROR, 'Ops...');
     } finally {
       emitter.emit('loading-off');
       loading.value = false;

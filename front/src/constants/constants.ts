@@ -13,26 +13,12 @@ export const variablesNames = {
   ENRICHEDGRAPH_IMG: 'enrichedGraphImg',
   STACKEDBARPLOT_IMG: 'stackedBarPlotImg',
 };
-export const stepNumbers = {
-  dataInput: 1,
-  removingOutliers: 2,
-  pickingThreshold: 3,
-  bootstraping: 4,
-  creatingNetworks: 5,
-  networkModules: 6,
-  enrichedModules: 7,
-  heatmap: 8,
-};
-
-export const formRules = {
-  isNumber: [
-    (v: string): boolean | string =>
-      !v || !isNaN(Number(v)) || 'Please enter a valid number',
-  ],
-};
 
 export const socketEvents = {
   CONNECT: 'connect',
+  DISCONNECT: 'disconnect',
+  CONNECT_ERROR: 'connect_error',
+  UPDATE_STATUS_OBJ: 'update-status-obj',
 };
 
 export const HTTP_STATUS_FOLDER_FOUND = 227;

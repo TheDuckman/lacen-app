@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import useEmitter from '@/composables/useEmitter';
+  import { ToastTypes } from '@/constants/ui.constants';
   import { onBeforeMount, ref } from 'vue';
 
   const emitter = useEmitter();
@@ -17,21 +18,21 @@
   };
 
   onBeforeMount(() => {
-    emitter.on('toastSuccess', (text: string, timeout = 3000) => {
+    emitter.on(ToastTypes.SUCCESS, (text: string, timeout = 3000) => {
       showToast({
         text,
         color: 'success',
         timeout,
       });
     });
-    emitter.on('toastWarning', (text: string, timeout = 4000) => {
+    emitter.on(ToastTypes.WARNING, (text: string, timeout = 4000) => {
       showToast({
         text,
         color: 'warning',
         timeout,
       });
     });
-    emitter.on('toastError', (text: string, timeout = 5000) => {
+    emitter.on(ToastTypes.ERROR, (text: string, timeout = 5000) => {
       showToast({
         text,
         color: 'error',

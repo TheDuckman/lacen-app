@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { useAppStateStore } from '@/stores/appState';
+
+  const appStateStore = useAppStateStore();
+</script>
 
 <template>
   <v-app-bar
@@ -26,14 +30,16 @@
         />
       </v-btn>
       <v-icon
-        class="mr-2"
-        color="error"
-        icon="mdi-lan-disconnect"
-      />
-      <v-icon
-        class="mr-2"
+        v-if="appStateStore.socketConnected"
+        class="mr-6"
         color="success"
         icon="mdi-lan-connect"
+      />
+      <v-icon
+        v-else
+        class="mr-6"
+        color="error"
+        icon="mdi-lan-disconnect"
       />
     </div>
   </v-app-bar>

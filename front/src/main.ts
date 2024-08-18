@@ -4,6 +4,7 @@ import App from './App.vue';
 import '@mdi/font/css/materialdesignicons.css'; // Ensure you are using css-loader
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
+import { VNumberInput } from 'vuetify/labs/VNumberInput';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { createPinia } from 'pinia';
@@ -29,7 +30,10 @@ const pinia = createPinia();
 
 // Vuetify
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VNumberInput,
+  },
   directives,
   theme: {
     defaultTheme: 'lacenTheme',

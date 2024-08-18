@@ -5,9 +5,11 @@
   import { HTTP_STATUS_FOLDER_FOUND } from '@/constants/constants';
   import { useUserDataStore } from '@/stores/userData';
   import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
   import useConfirmDialog from '@/composables/useConfirmDialog';
+  import useFlowControl from '@/composables/useFlowControl';
+  import { ToastTypes } from '@/constants/ui.constants';
 
+  // Composables
   const {
     cancelHandler,
     confirmHandler,
@@ -17,9 +19,10 @@
     triggerDialog,
   } = useConfirmDialog();
 
+  const { nextStep } = useFlowControl();
+
   const userDataStore = useUserDataStore();
   const emitter = useEmitter();
-  const router = useRouter();
 
   // Identifier
   const identifier = ref();
@@ -49,23 +52,21 @@
             ],
           });
           if (promptResponse) {
+            userDataStore.updateStatusObj(res.data, true);
             successMsg = 'Previous work session restored';
           } else {
             emitter.emit(
-              'toastWarning',
+              ToastTypes.WARNING,
               'Select a different identifier to continue',
             );
             return;
           }
         }
-
-        emitter.emit('toastSuccess', successMsg);
-        router.push({
-          name: 'DataInput',
-        });
+        emitter.emit(ToastTypes.SUCCESS, successMsg);
+        nextStep();
       } catch (error) {
         console.error(error);
-        emitter.emit('toastError', 'Error trying to set identifier');
+        emitter.emit(ToastTypes.ERROR, 'Error trying to set identifier');
       }
     }
   };

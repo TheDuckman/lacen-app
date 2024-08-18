@@ -5,27 +5,28 @@
   import NetworkAnimation from '@/components/layout/NetworkAnimation.vue';
   import { onBeforeMount } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useAppStateStore } from './stores/appState';
+  import { useAppStateStore } from '@/stores/appState';
+  import { useUserDataStore } from '@/stores/userData';
   import { socketEvents } from '@/constants/constants';
   import socket from '@/api/socket';
 
   const route = useRoute();
   const appStateStore = useAppStateStore();
+  const userDataStore = useUserDataStore();
 
   onBeforeMount(() => {
     socket.on(socketEvents.CONNECT, () => {
-      appStateStore.updateSocketStatus(true);
-    });
-    socket.on('connect', () => {
       appStateStore.updateSocketStatus(socket.connected);
     });
-    socket.on('disconnect', () => {
+    socket.on(socketEvents.DISCONNECT, () => {
       appStateStore.updateSocketStatus(socket.connected);
     });
-    socket.on('connect_error', (error: any) => {
+    socket.on(socketEvents.CONNECT_ERROR, (error: any) => {
       console.log('[SOCKET] Connection error', { error });
     });
-    socket.on('update-status-obj', (newStatusObjStr: string) => {
+    // Listen to event from backend to update user data
+    socket.on(socketEvents.UPDATE_STATUS_OBJ, (newStatusObjStr: string) => {
+      userDataStore.updateStatusObj(newStatusObjStr);
       console.log('[STATUS] Updated', newStatusObjStr);
     });
   });
