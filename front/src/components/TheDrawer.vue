@@ -10,6 +10,32 @@
 
   // Steps
   const steps = computed(() => appStateStore.stepStatus);
+  const lockSteps = ref(true);
+  const doneOrNext = (step: StepData) => {
+    console.log('index', step);
+    switch (step.pageName) {
+      case 'DataInput':
+        return true;
+      case 'RemovingOutliers':
+        return steps.value.dataInput.done;
+      case 'PickingThreshold':
+        return steps.value.removingOutliers.done;
+      case 'BootStraping':
+        return steps.value.pickingThreshold.done;
+      case 'CreatingNetworks':
+        return (
+          steps.value.bootstraping.done || steps.value.bootstraping.skipped
+        );
+      case 'NetworkModules':
+        return steps.value.creatingNetworks.done;
+      case 'EnrichedModules':
+        return steps.value.networkModules.done;
+      case 'Heatmap':
+        return steps.value.enrichedModules.done;
+      default:
+        return false;
+    }
+  };
   const stepSubtitle = (step: StepData) => {
     if (step.skipped) {
       return 'Skipped';
@@ -20,6 +46,9 @@
     return 'Pending';
   };
   const stepColor = (step: StepData) => {
+    if (step.skipped) {
+      return 'warning';
+    }
     if (step.done) {
       return 'success';
     }
@@ -27,6 +56,15 @@
       return 'info';
     }
     return 'secondary';
+  };
+  const stepIcon = (step: StepData) => {
+    if (step.skipped) {
+      return 'mdi-debug-step-over';
+    }
+    if (step.done) {
+      return 'mdi-check';
+    }
+    return 'mdi-progress-helper';
   };
 
   const goToRoute = (pageName: string) => {
@@ -51,12 +89,32 @@
 
 <template>
   <v-navigation-drawer v-model="drawerVisible">
+    <div class="d-flex justify-center">
+      <v-switch
+        v-model="lockSteps"
+        color="info"
+        hide-details
+      >
+        <template #prepend>
+          <v-icon
+            :icon="
+              lockSteps ? 'mdi-lock-outline' : 'mdi-lock-open-variant-outline'
+            "
+          />
+        </template>
+        <template #label>
+          {{ lockSteps ? 'Steps are locked' : 'Steps are unlocked' }}
+        </template>
+      </v-switch>
+    </div>
+    <v-divider></v-divider>
     <v-list lines="two">
       <v-list-item
-        v-for="(step, index) in steps"
-        :key="index"
+        v-for="step in steps"
+        :key="step.pageName"
         :active="currentRoute === step.pageName"
         @click="goToRoute(step.pageName)"
+        :disabled="lockSteps && !doneOrNext(step)"
       >
         <v-list-item-title :class="`text-${stepColor(step)}`">
           {{ step.title }}
@@ -68,7 +126,7 @@
             size="30"
           >
             <v-icon
-              :icon="step.done ? 'mdi-check' : 'mdi-progress-helper'"
+              :icon="stepIcon(step)"
               color="white"
             ></v-icon>
           </v-avatar>

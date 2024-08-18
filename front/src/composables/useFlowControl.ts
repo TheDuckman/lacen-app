@@ -22,11 +22,14 @@ export default function useFlowControl() {
         name: appStateStore.stepStatus.pickingThreshold.pageName,
       });
     }
-    if (userDataStore.isPickingThresholdDone) {
+    if (!userDataStore.bootstrapingDone && !userDataStore.bootstrapingSkipped) {
       return router.push({
         name: appStateStore.stepStatus.bootstraping.pageName,
       });
     }
+    return router.push({
+      name: appStateStore.stepStatus.creatingNetworks.pageName,
+    });
   };
 
   return {

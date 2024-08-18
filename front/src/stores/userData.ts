@@ -56,7 +56,7 @@ export const useUserDataStore = defineStore('userData', () => {
     useAppStateStore().stepStatus.removingOutliers.done =
       isRemovingOutliersDone.value;
   });
-  //
+  // picking threshold
   const isPickingThresholdDone = computed(() => {
     if (!statusObj.value) return false;
     return (
@@ -67,6 +67,22 @@ export const useUserDataStore = defineStore('userData', () => {
   watch(isPickingThresholdDone, () => {
     useAppStateStore().stepStatus.pickingThreshold.done =
       isPickingThresholdDone.value;
+  });
+  // bootstraping
+  const bootstrapingSkipped = computed(() => {
+    return !!statusObj.value && statusObj.value.bootstraping.skipped;
+  });
+  const bootstrapingDone = computed(() => {
+    return !!statusObj.value && statusObj.value.bootstraping.done;
+  });
+  watch(bootstrapingSkipped, () => {
+    useAppStateStore().stepStatus.bootstraping.done = false;
+    useAppStateStore().stepStatus.bootstraping.skipped =
+      bootstrapingSkipped.value;
+  });
+  watch(bootstrapingDone, () => {
+    useAppStateStore().stepStatus.bootstraping.skipped = false;
+    useAppStateStore().stepStatus.bootstraping.done = bootstrapingDone.value;
   });
 
   // R backend variables
@@ -92,6 +108,8 @@ export const useUserDataStore = defineStore('userData', () => {
     isFilterAndTransformDone,
     isRemovingOutliersDone,
     isPickingThresholdDone,
+    bootstrapingDone,
+    bootstrapingSkipped,
     // R backend variables
     variables,
     updateVars,
