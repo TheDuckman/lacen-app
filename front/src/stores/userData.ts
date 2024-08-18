@@ -59,7 +59,14 @@ export const useUserDataStore = defineStore('userData', () => {
   //
   const isPickingThresholdDone = computed(() => {
     if (!statusObj.value) return false;
-    return statusObj.value.pickingThreshold.plotGenerated;
+    return (
+      statusObj.value.pickingThreshold.plotGenerated &&
+      !!statusObj.value.pickingThreshold.indice
+    );
+  });
+  watch(isPickingThresholdDone, () => {
+    useAppStateStore().stepStatus.pickingThreshold.done =
+      isPickingThresholdDone.value;
   });
 
   // R backend variables

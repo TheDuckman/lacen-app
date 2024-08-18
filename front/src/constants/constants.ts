@@ -19,6 +19,8 @@ export const socketEvents = {
   DISCONNECT: 'disconnect',
   CONNECT_ERROR: 'connect_error',
   UPDATE_STATUS_OBJ: 'update-status-obj',
+  THRESHOLD_PLOT_OK: 'threshold-plot-ok',
+  THRESHOLD_PLOT_ERROR: 'threshold-plot-error',
 };
 
 export const HTTP_STATUS_FOLDER_FOUND = 227;

@@ -42,7 +42,7 @@ const getVariables = async (): Promise<string> => {
   return res.data;
 };
 
-const getImgPath = async (imgName: string): Promise<unknown> => {
+const getImgPath = async (imgName: string): Promise<string> => {
   const res = await axios.post('getImgPath', { imgName });
   return res.data;
 };
@@ -103,7 +103,7 @@ const filterTransform = async (): Promise<void> => {
   return res.data;
 };
 
-const selectOutlierSample = async (height: string | null): Promise<void> => {
+const selectOutlierSample = async (height: string | null): Promise<string> => {
   const res = await axios.post('selectOutlierSample', { height });
   return res.data;
 };

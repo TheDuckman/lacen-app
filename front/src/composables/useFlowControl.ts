@@ -22,6 +22,11 @@ export default function useFlowControl() {
         name: appStateStore.stepStatus.pickingThreshold.pageName,
       });
     }
+    if (userDataStore.isPickingThresholdDone) {
+      return router.push({
+        name: appStateStore.stepStatus.bootstraping.pageName,
+      });
+    }
   };
 
   return {

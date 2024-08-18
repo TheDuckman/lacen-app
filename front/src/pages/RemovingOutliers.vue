@@ -3,7 +3,9 @@
   import useEmitter from '@/composables/useEmitter';
   import { ToastTypes } from '@/constants/ui.constants';
   import { useUserDataStore } from '@/stores/userData';
-  import { computed, onBeforeMount, ref } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
+  import { cleanRString, getImgUrl } from '@/utils/functions.utils';
+  import { variablesNames } from '@/constants/constants';
 
   const userDataStore = useUserDataStore();
 
@@ -57,13 +59,7 @@
   };
 
   // Dendrogram
-  const dendrogramImg = ref();
-  const imgUrl = computed(() => {
-    if (!dendrogramImg.value) {
-      return null;
-    }
-    return `${import.meta.env.VITE_STATIC_URL}${dendrogramImg.value}`;
-  });
+  const dendrogramImg = ref<string | null>(null);
 
   onBeforeMount(async () => {
     loading.value = true;
@@ -80,6 +76,14 @@
         useEmitter().emit(ToastTypes.ERROR, 'Oops...');
       }
     }
+    // If img exists, get it
+    if (userDataStore.statusObj?.removingOutliers.firstDendrogram) {
+      loading.value = true;
+      const imgStr = await requester.getImgPath(variablesNames.DENDROGRAM_IMG);
+      loading.value = false;
+      dendrogramImg.value = cleanRString(imgStr as string);
+    }
+
     loading.value = false;
   });
 </script>
@@ -143,7 +147,7 @@
             <LacenBtn
               @click="selectOutlierSample"
               :loading="loading"
-              :disabled="!imgUrl"
+              :disabled="getImgUrl(dendrogramImg)"
               block
               color="info"
               icon="mdi-family-tree"
@@ -167,7 +171,7 @@
       <!-- IMAGE -->
       <ImageCard
         title="Dendrogram"
-        :imgUrl="imgUrl"
+        :imgUrl="getImgUrl(dendrogramImg)"
       />
     </v-col>
   </v-row>
