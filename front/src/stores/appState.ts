@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useAppStateStore = defineStore('appStateStore', () => {
+  // Steps
   const stepStatus = ref<StepsStatus>({
     dataInput: {
       title: 'Data input',
@@ -55,7 +56,16 @@ export const useAppStateStore = defineStore('appStateStore', () => {
     },
   });
 
+  // Socket
+  const socketConnected = ref(false);
+  const updateSocketStatus = (newVal: boolean) => {
+    socketConnected.value = newVal;
+    console.log(`[SOCKET] connection: ${newVal}`);
+  };
+
   return {
     stepStatus,
+    socketConnected,
+    updateSocketStatus,
   };
 });

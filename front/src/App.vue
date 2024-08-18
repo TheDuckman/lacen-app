@@ -3,16 +3,30 @@
   import TheDrawer from '@/components/TheDrawer.vue';
   import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
   import NetworkAnimation from '@/components/layout/NetworkAnimation.vue';
-  import { useRoute } from 'vue-router';
   import { onBeforeMount } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { useAppStateStore } from './stores/appState';
   import { socketEvents } from '@/constants/constants';
   import socket from '@/api/socket';
 
   const route = useRoute();
+  const appStateStore = useAppStateStore();
 
   onBeforeMount(() => {
     socket.on(socketEvents.CONNECT, () => {
-      console.log('[SOCKET] User connected');
+      appStateStore.updateSocketStatus(true);
+    });
+    socket.on('connect', () => {
+      appStateStore.updateSocketStatus(socket.connected);
+    });
+    socket.on('disconnect', () => {
+      appStateStore.updateSocketStatus(socket.connected);
+    });
+    socket.on('connect_error', (error: any) => {
+      console.log('[SOCKET] Connection error', { error });
+    });
+    socket.on('update-status-obj', (newStatusObjStr: string) => {
+      console.log('[STATUS] Updated', newStatusObjStr);
     });
   });
 </script>
