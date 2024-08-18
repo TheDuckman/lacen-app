@@ -1,7 +1,13 @@
 import fs from "fs";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import app from "./app";
+import app from "@/app";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "@/interface/socket.interface";
 
 // Socket server
 let httpServer;
@@ -13,8 +19,15 @@ const bs = function bootstrap() {
   if (NODE_ENV !== "production") {
     // DEV
     httpServer = createServer(app);
-    io = new Server(httpServer, {
-      cors: {},
+    io = new Server<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >(httpServer, {
+      cors: {
+        origin: process.env.BASE_URL_FRONT,
+      },
     });
     io.on("connection", (socket) => {
       // eslint-disable-next-line no-console

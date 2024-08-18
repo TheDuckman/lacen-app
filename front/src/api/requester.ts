@@ -4,7 +4,7 @@ import { useUserDataStore } from '@/stores/userData';
 import { HeatmapImgObj } from '@/interface/api.interface';
 
 // backend base URL
-axios.defaults.baseURL = process.env.VUE_APP_API_URL;
+axios.defaults.baseURL = process.env.VITE_API_URL;
 
 // Injects identifier into every request
 axios.defaults.params = {};

@@ -4,8 +4,17 @@
   import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
   import NetworkAnimation from '@/components/layout/NetworkAnimation.vue';
   import { useRoute } from 'vue-router';
+  import { onBeforeMount } from 'vue';
+  import { socketEvents } from '@/constants/constants';
+  import socket from '@/api/socket';
 
   const route = useRoute();
+
+  onBeforeMount(() => {
+    socket.on(socketEvents.CONNECT, () => {
+      console.log('[SOCKET] User connected');
+    });
+  });
 </script>
 
 <template>

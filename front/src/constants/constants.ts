@@ -31,4 +31,8 @@ export const formRules = {
   ],
 };
 
+export const socketEvents = {
+  CONNECT: 'connect',
+};
+
 export const HTTP_STATUS_FOLDER_FOUND = 227;
