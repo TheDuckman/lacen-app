@@ -26,13 +26,13 @@
         />
       </v-btn>
       <v-icon
-        class="mr-1"
-        color="error lighten-1"
+        class="mr-2"
+        color="error"
         icon="mdi-lan-disconnect"
       />
       <v-icon
-        class="mr-1"
-        color="success lighten-1"
+        class="mr-2"
+        color="success"
         icon="mdi-lan-connect"
       />
     </div>

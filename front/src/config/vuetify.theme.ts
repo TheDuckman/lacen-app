@@ -4,7 +4,7 @@ export const lacenTheme: ThemeDefinition = {
   dark: false,
   colors: {
     primary: '#1A237E',
-    success: '#2E7D32',
+    success: '#388E3C',
     // info: '#832561',
     info: '#4777A2',
     error: '#C62828',
