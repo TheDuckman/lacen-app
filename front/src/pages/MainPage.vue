@@ -1,14 +1,19 @@
 <script setup lang="ts">
+  import requester from '@/api/requester';
+  import useEmitter from '@/composables/useEmitter';
+  import { HTTP_STATUS_FOLDER_FOUND } from '@/constants/constants';
   import { useUserDataStore } from '@/stores/userData';
   import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
-  const router = useRouter();
   const userDataStore = useUserDataStore();
+  const emitter = useEmitter();
+  const router = useRouter();
 
   // Identifier
   const identifier = ref();
 
+  // Submit btn
   const isDisabled = computed(() => {
     return !identifier.value || identifier.value.length < 3;
   });
@@ -16,10 +21,50 @@
   const beginLacen = async () => {
     if (!isDisabled.value) {
       userDataStore.setIdentifier(identifier.value);
-      router.push({
-        name: 'DataInput',
-      });
-      // TODO: handle duplicate identifier
+      try {
+        const res = await requester.checkIdentifier();
+        if (res.status === HTTP_STATUS_FOLDER_FOUND) {
+          emitter.emit('toastWarning', 'Careful dude');
+        } else {
+          emitter.emit('toastSuccess', 'New workspace created');
+          router.push({
+            name: 'DataInput',
+          });
+        }
+        //   const restoreTitle = 'Restore workspace?';
+        //   const restoreText = `Do you wish to resume your previous work session?`;
+
+        //   const archiveTitle = 'Previous data will be ARCHIVED!';
+        //   const archiveText =
+        //     'WARNING! This will start a new work session and the previous data file will be ARCHIVED. Proceed anyway?';
+        //   if (
+        //     (await this.$root.$confirm(restoreTitle, restoreText)) === false
+        //   ) {
+        //     if (
+        //       (await this.$root.$confirm(archiveTitle, archiveText)) === true
+        //     ) {
+        //       // double checks if user wants to archive file
+        //       // creates a new folder with the same identifier
+        //       await requester.archiveRdata(identifier.value);
+        //       this.$root.$emit('toastSuccess', 'New workspace created');
+        //     } else {
+        //       // await this.getVariables();
+        //       this.$root.$store.updateStatusObj(res.data, true);
+        //       this.$root.$emit('toastSuccess', 'Previous workspace maintained');
+        //     }
+        //   } else {
+        //     // await this.getVariables();
+        //     this.$root.$store.updateStatusObj(res.data, true);
+        //     this.$root.$emit('toastSuccess', 'Previous workspace maintained');
+        //   }
+        // }
+      } catch (error) {
+        console.error(error);
+        emitter.emit('toastError', 'Error trying to set identifier');
+      } finally {
+        // this.begin = true;
+        // this.$root.$emit('loading-off');
+      }
     }
   };
 </script>

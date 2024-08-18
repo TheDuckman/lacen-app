@@ -2,6 +2,7 @@
   import TheNavBar from '@/components/TheNavBar.vue';
   import TheDrawer from '@/components/TheDrawer.vue';
   import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
+  import TheSnackbar from '@/components/TheSnackbar.vue';
   import NetworkAnimation from '@/components/layout/NetworkAnimation.vue';
   import { onBeforeMount } from 'vue';
   import { useRoute } from 'vue-router';
@@ -36,6 +37,7 @@
     <v-app>
       <NetworkAnimation :showAnimation="route.name === 'MainPage'">
         <TheConfirmDialog />
+        <TheSnackbar />
         <v-main>
           <TheNavBar />
           <TheDrawer />
