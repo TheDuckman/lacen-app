@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import TheNavBar from '@/components/TheNavBar.vue';
   import TheDrawer from '@/components/TheDrawer.vue';
-  import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
   import TheSnackbar from '@/components/TheSnackbar.vue';
   import NetworkAnimation from '@/components/layout/NetworkAnimation.vue';
   import { onBeforeMount } from 'vue';
@@ -36,7 +35,6 @@
   <v-responsive class="border rounded">
     <v-app>
       <NetworkAnimation :showAnimation="route.name === 'MainPage'">
-        <TheConfirmDialog />
         <TheSnackbar />
         <v-main>
           <TheNavBar />

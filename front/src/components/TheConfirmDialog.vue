@@ -1,49 +1,31 @@
 <script setup lang="ts">
-  import useEmitter from '@/composables/useEmitter';
-  import { onMounted, ref } from 'vue';
-
-  // Emitter
-  const emitter = useEmitter();
-
-  // State
-  const isVisible = ref(false);
-
-  // Content
-  const title = ref('');
-  const text = ref<string[]>([]);
-
-  /**
-   * TODO: Resolve this
-   */
-  // Hanlders
-  const resolveFn = ref<any>();
-  const rejectFn = ref<any>();
-  const confirm = () => {
-    resolveFn.value(true);
-    isVisible.value = false;
-  };
-  const cancel = () => {
-    resolveFn.value(false);
-    isVisible.value = false;
-  };
-
-  onMounted(() => {
-    emitter.on('confirm', async (eventData: any) => {
-      title.value = eventData.title;
-      text.value = eventData.text;
-      isVisible.value = true;
-      return new Promise((resolve, reject) => {
-        resolveFn.value = resolve;
-        rejectFn.value = reject;
-      });
-    });
+  defineProps({
+    isVisible: {
+      type: Boolean,
+      default: false,
+    },
+    text: {
+      type: Array,
+      default: () => [],
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    cancelHandler: {
+      default: () => () => {},
+    },
+    confirmHandler: {
+      default: () => () => {},
+    },
   });
 </script>
 
 <template>
   <v-dialog
-    v-model="isVisible"
-    max-width="500"
+    persistent
+    :model-value="isVisible"
+    max-width="700"
   >
     <v-card>
       <v-card-title
@@ -67,7 +49,7 @@
         <v-btn
           color="error"
           prepend-icon="mdi-close"
-          @click="cancel"
+          @click="cancelHandler"
         >
           Close
         </v-btn>
@@ -75,7 +57,7 @@
         <v-btn
           color="success"
           prepend-icon="mdi-check"
-          @click="confirm"
+          @click="confirmHandler"
         >
           Okay
         </v-btn>
