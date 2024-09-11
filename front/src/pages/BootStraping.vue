@@ -1,8 +1,11 @@
 <script setup lang="ts">
   import requester from '@/api/requester';
   import useEmitter from '@/composables/useEmitter';
+  import { socketEvents } from '@/constants/constants';
   import { ToastTypes } from '@/constants/ui.constants';
-  import { ref } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
+  import socket from '@/api/socket';
+  import { IncomingEventObject } from '@/interface/api.interface';
 
   // Loading
   const loading = ref(false);
@@ -11,9 +14,6 @@
   const emitter = useEmitter();
 
   const runBootstrap = async () => {
-    /**
-     * TODO: handle long request
-     */
     loading.value = true;
     // this.$root.$emit('loading-on', true);
     try {
@@ -35,6 +35,16 @@
       // this.$root.$emit('loading-off');
     }
   };
+  onBeforeMount(() => {
+    socket.on(socketEvents.BOOTSTRAP_OK, () => {
+      loading.value = false;
+      emitter.emit(ToastTypes.SUCCESS, 'Bootstraping done');
+    });
+    socket.on(socketEvents.BOOTSTRAP_ERROR, () => {
+      loading.value = false;
+      emitter.emit(ToastTypes.ERROR, 'Bootstraping error!');
+    });
+  });
 </script>
 
 <template>

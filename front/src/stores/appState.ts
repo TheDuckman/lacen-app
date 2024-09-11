@@ -30,9 +30,9 @@ export const useAppStateStore = defineStore('appStateStore', () => {
       done: false,
       skipped: false,
     },
-    creatingNetworks: {
-      title: 'Creating networks',
-      pageName: 'CreatingNetworks',
+    creatingNetwork: {
+      title: 'Creating network',
+      pageName: 'CreatingNetwork',
       current: false,
       done: false,
     },

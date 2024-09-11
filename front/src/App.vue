@@ -21,7 +21,7 @@
     socket.on(socketEvents.DISCONNECT, () => {
       appStateStore.updateSocketStatus(socket.connected);
     });
-    socket.on(socketEvents.CONNECT_ERROR, (error: any) => {
+    socket.on(socketEvents.CONNECT_ERROR, (error: unknown) => {
       console.log('[SOCKET] Connection error', { error });
     });
     // Listen to event from backend to update user data
@@ -41,11 +41,11 @@
           <TheNavBar />
           <TheDrawer />
           <v-container>
-            <router-view v-slot="{ Component, route }">
+            <router-view v-slot="{ Component }">
               <v-fade-transition hide-on-leave>
-                <div :key="route.name">
+                <keep-alive>
                   <component :is="Component"></component>
-                </div>
+                </keep-alive>
               </v-fade-transition>
             </router-view>
           </v-container>

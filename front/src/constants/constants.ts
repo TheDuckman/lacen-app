@@ -21,6 +21,12 @@ export const socketEvents = {
   UPDATE_STATUS_OBJ: 'update-status-obj',
   THRESHOLD_PLOT_OK: 'threshold-plot-ok',
   THRESHOLD_PLOT_ERROR: 'threshold-plot-error',
+  BOOTSTRAP_OK: 'bootstrap-ok',
+  BOOTSTRAP_ERROR: 'bootstrap-error',
+  GENERATE_NETWORK_OK: 'generate-network-ok',
+  GENERATE_NETWORK_ERROR: 'generate-network-error',
+  STACKED_BARPLOT_OK: 'stacked-barplot-ok',
+  STACKED_BARPLOT_ERROR: 'stacked-barplot-error',
 };
 
 export const HTTP_STATUS_FOLDER_FOUND = 227;

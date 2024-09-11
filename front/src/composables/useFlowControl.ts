@@ -27,8 +27,18 @@ export default function useFlowControl() {
         name: appStateStore.stepStatus.bootstraping.pageName,
       });
     }
+    if (!userDataStore.createNetworkDone) {
+      return router.push({
+        name: appStateStore.stepStatus.creatingNetwork.pageName,
+      });
+    }
+    if (!userDataStore.networkModulesDone) {
+      return router.push({
+        name: appStateStore.stepStatus.networkModules.pageName,
+      });
+    }
     return router.push({
-      name: appStateStore.stepStatus.creatingNetworks.pageName,
+      name: appStateStore.stepStatus.enrichedModules.pageName,
     });
   };
 

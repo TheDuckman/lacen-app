@@ -11,7 +11,7 @@ export interface StepsStatus {
   removingOutliers: StepData;
   pickingThreshold: StepData;
   bootstraping: StepData;
-  creatingNetworks: StepData;
+  creatingNetwork: StepData;
   networkModules: StepData;
   enrichedModules: StepData;
   heatmap: StepData;

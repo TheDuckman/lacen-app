@@ -84,6 +84,20 @@ export const useUserDataStore = defineStore('userData', () => {
     useAppStateStore().stepStatus.bootstraping.skipped = false;
     useAppStateStore().stepStatus.bootstraping.done = bootstrapingDone.value;
   });
+  // creating network
+  const createNetworkDone = computed(() => {
+    return !!statusObj.value && statusObj.value.creatingNetwork.done;
+  });
+  watch(createNetworkDone, () => {
+    useAppStateStore().stepStatus.creatingNetwork.done = true;
+  });
+  // network modules
+  const networkModulesDone = computed(() => {
+    return !!statusObj.value && statusObj.value.networkModules.barplotGenerated;
+  });
+  watch(networkModulesDone, () => {
+    useAppStateStore().stepStatus.networkModules.done = true;
+  });
 
   // R backend variables
   const variables = ref<any>([]);
@@ -110,6 +124,8 @@ export const useUserDataStore = defineStore('userData', () => {
     isPickingThresholdDone,
     bootstrapingDone,
     bootstrapingSkipped,
+    createNetworkDone,
+    networkModulesDone,
     // R backend variables
     variables,
     updateVars,

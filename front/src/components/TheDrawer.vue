@@ -12,7 +12,6 @@
   const steps = computed(() => appStateStore.stepStatus);
   const lockSteps = ref(true);
   const doneOrNext = (step: StepData) => {
-    console.log('index', step);
     switch (step.pageName) {
       case 'DataInput':
         return true;
@@ -22,12 +21,12 @@
         return steps.value.removingOutliers.done;
       case 'BootStraping':
         return steps.value.pickingThreshold.done;
-      case 'CreatingNetworks':
+      case 'CreatingNetwork':
         return (
           steps.value.bootstraping.done || steps.value.bootstraping.skipped
         );
       case 'NetworkModules':
-        return steps.value.creatingNetworks.done;
+        return steps.value.creatingNetwork.done;
       case 'EnrichedModules':
         return steps.value.networkModules.done;
       case 'Heatmap':
