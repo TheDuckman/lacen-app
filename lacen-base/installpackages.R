@@ -1,0 +1,6 @@
+options(timeout=9999)
+install.packages("devtools", repos = "http://cran.r-project.org")
+install.packages("lattice")
+install.packages("https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.6-5.tar.gz", repo=NULL)
+install.packages("https://cran.r-project.org/src/contrib/Archive/MASS/MASS_7.3-60.0.1.tar.gz", repo=NULL)
+devtools::install_gitlab(repo = "bioinfo-lapic/lacen_package_test", dependencies = TRUE, upgrade = "never", force=TRUE)

@@ -3,7 +3,7 @@
   import useEmitter from '@/composables/useEmitter';
   import { ToastTypes } from '@/constants/ui.constants';
   import { useUserDataStore } from '@/stores/userData';
-  import { onBeforeMount, ref } from 'vue';
+  import { computed, onBeforeMount, ref } from 'vue';
   import { cleanRString, getImgUrl } from '@/utils/functions.utils';
   import { variablesNames } from '@/constants/constants';
 
@@ -26,9 +26,12 @@
       loading.value = false;
     }
   };
+  const disableFilterTransform = computed(
+    () => userDataStore.isFilterAndTransformDone,
+  );
 
   // Cut outlier
-  const height = ref(0);
+  const height = ref('');
   const selectOutlierSample = async () => {
     // if (!this.heightForm.validate()) {
     //   return;
@@ -51,20 +54,33 @@
     loading.value = true;
     try {
       await requester.acceptHeight(`${userDataStore.currentHeight}`);
+      emitter.emit(ToastTypes.SUCCESS, 'Value accepted');
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Ops...');
     } finally {
       loading.value = false;
     }
   };
+  const disableAcceptBtn = computed(
+    () =>
+      `${height.value}` !== `${userDataStore.currentHeight}` ||
+      userDataStore.isRemovingOutliersDone,
+  );
 
   // Dendrogram
   const dendrogramImg = ref<string | null>(null);
+  const disableGenerateBtn = computed(
+    () =>
+      !userDataStore.isFilterAndTransformDone || getImgUrl(dendrogramImg.value),
+  );
+  const disableRegenerateBtn = computed(
+    () => `${height.value}` === `${userDataStore.currentHeight}`,
+  );
 
   onBeforeMount(async () => {
     loading.value = true;
     // get previous value from store
-    height.value = userDataStore.currentHeight || 0;
+    height.value = `${userDataStore.currentHeight}` || '';
     // run instantiation if it's the user's first time here
     if (
       userDataStore.isDataInputDone &&
@@ -102,6 +118,7 @@
             <LacenBtn
               @click="filterTransform"
               :loading="loading"
+              :disabled="disableFilterTransform"
               block
               color="info"
               icon="mdi-filter"
@@ -110,7 +127,7 @@
             />
             <LacenBtn
               @click="selectOutlierSample"
-              :disabled="!userDataStore.isFilterAndTransformDone"
+              :disabled="disableGenerateBtn"
               :loading="loading"
               block
               color="info"
@@ -127,7 +144,7 @@
       >
         <v-card-text>
           <div class="d-flex flex-column my-5 ml-5">
-            <v-number-input
+            <v-text-field
               v-model="height"
               :min="0"
               hide-details
@@ -147,7 +164,7 @@
             <LacenBtn
               @click="selectOutlierSample"
               :loading="loading"
-              :disabled="getImgUrl(dendrogramImg)"
+              :disabled="disableRegenerateBtn"
               block
               color="info"
               icon="mdi-family-tree"
@@ -157,7 +174,7 @@
             <LacenBtn
               @click="acceptHeightValue"
               :loading="loading"
-              :disabled="userDataStore.currentHeight !== height"
+              :disabled="disableAcceptBtn"
               block
               color="success"
               icon="mdi-check"
