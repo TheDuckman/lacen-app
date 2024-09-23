@@ -7,7 +7,7 @@
   import { IncomingEventObject } from '@/interface/api.interface';
   import { useUserDataStore } from '@/stores/userData';
   import { cleanRString, getImgUrl } from '@/utils/functions.utils';
-  import { onBeforeMount, ref } from 'vue';
+  import { computed, onBeforeMount, ref } from 'vue';
 
   const userDataStore = useUserDataStore();
 
@@ -17,6 +17,7 @@
   // Emitter
   const emitter = useEmitter();
 
+  // Plot
   const thresholdPlotImg = ref();
   const indicePower = ref<number | null>(null);
   const generateThresholdPlot = async () => {
@@ -27,11 +28,16 @@
     loading.value = true;
     try {
       await requester.generateThresholdPlot();
+      emitter.emit(ToastTypes.SUCCESS, 'Value was set');
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Ops...');
     }
   };
+  const disablePlotBtn = computed(
+    () => userDataStore.statusObj?.pickingThreshold.plotGenerated,
+  );
 
+  // Set indice power
   const setIndicePower = async () => {
     // this.$root.$emit('loading-on');
     loading.value = true;
@@ -93,6 +99,7 @@
             <LacenBtn
               @click="generateThresholdPlot"
               :loading="loading"
+              :disabled="disablePlotBtn"
               block
               color="info"
               icon="mdi-chart-bell-curve-cumulative"
@@ -108,9 +115,9 @@
       >
         <v-card-text>
           <div class="d-flex flex-column align-center my-5 ml-5">
-            <v-number-input
+            <v-text-field
               v-model="indicePower"
-              :min="0"
+              type="number"
               label="Indice power"
               variant="outlined"
               density="comfortable"

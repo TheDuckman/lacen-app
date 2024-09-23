@@ -146,7 +146,6 @@
           <div class="d-flex flex-column my-5 ml-5">
             <v-text-field
               v-model="height"
-              :min="0"
               hide-details
               label="Height"
               variant="outlined"
