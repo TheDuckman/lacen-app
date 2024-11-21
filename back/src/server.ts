@@ -1,7 +1,7 @@
 import fs from "fs";
 import { createServer } from "http";
+import app from "./app";
 import { Server } from "socket.io";
-import app from "@/app";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -19,16 +19,14 @@ const bs = function bootstrap() {
   if (NODE_ENV !== "production") {
     // DEV
     httpServer = createServer(app);
-    io = new Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >(httpServer, {
-      cors: {
-        origin: process.env.BASE_URL_FRONT,
+    io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
+      httpServer,
+      {
+        cors: {
+          origin: process.env.BASE_URL_FRONT,
+        },
       },
-    });
+    );
     io.on("connection", (socket) => {
       // eslint-disable-next-line no-console
       console.log(`[SOCKET] User connected. Socket id: ${socket.id}'`);

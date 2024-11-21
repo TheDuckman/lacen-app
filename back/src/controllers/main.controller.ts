@@ -30,10 +30,7 @@ export class Controller {
     [GET] /checkIdentifier
     Check user folder
   */
-  public static async checkIdentifier(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async checkIdentifier(req: Request, res: Response): Promise<void> {
     // prevent status code 304
     req.headers["if-none-match"] = "no-match-for-this";
     const identifier = req.query.identifier as string;
@@ -154,10 +151,7 @@ export class Controller {
     [POST] /setParameters
     Sets the value of maxBlockSize and numCores parameters
   */
-  public static async setParameters(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async setParameters(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const maxBlockSize = req.body.maxBlockSize || 0;
     const numCores = req.body.numCores || 1;
@@ -184,19 +178,12 @@ export class Controller {
     [POST] /uploadDataFiles
     Receives the base files for the analysis
   */
-  public static async uploadDataFiles(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async uploadDataFiles(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const result = [];
     try {
       // Check for the presence of all 3 files
-      if (
-        !has(req.files, "count") ||
-        !has(req.files, "expression") ||
-        !has(req.files, "label")
-      ) {
+      if (!has(req.files, "count") || !has(req.files, "expression") || !has(req.files, "label")) {
         throw new Error();
       }
     } catch (error) {
@@ -248,9 +235,7 @@ export class Controller {
         // Importing
         // eslint-disable-next-line no-await-in-loop
         output = await runProcessSpawn(identifier, "Rscript", [
-          index === 0
-            ? rScriptPaths.FILE_COUNTS_UPLOAD
-            : rScriptPaths.FILE_UPLOAD,
+          index === 0 ? rScriptPaths.FILE_COUNTS_UPLOAD : rScriptPaths.FILE_UPLOAD,
           `${strObj.path.data}/${strObj.filename.rdata}`,
           fileItem.variableName,
           filePath,
@@ -280,10 +265,7 @@ export class Controller {
     [POST] /uploadAnnotationFile
     Receives annotation file
   */
-  public static async uploadAnnotationFile(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async uploadAnnotationFile(req: Request, res: Response): Promise<void> {
     const { file } = req;
     const { type } = req.body;
     if (!file || !type) {
@@ -297,16 +279,12 @@ export class Controller {
     let variable: string;
     switch (type) {
       case "coding":
-        filename = `${defaultFilenamePrefixes.CODING}${path.extname(
-          file.originalname,
-        )}`;
+        filename = `${defaultFilenamePrefixes.CODING}${path.extname(file.originalname)}`;
         variable = variablesNames.CODING;
         statusObj.dataInput.geneFile = true;
         break;
       case "noncoding":
-        filename = `${defaultFilenamePrefixes.NONCODING}${path.extname(
-          file.originalname,
-        )}`;
+        filename = `${defaultFilenamePrefixes.NONCODING}${path.extname(file.originalname)}`;
         variable = variablesNames.NONCODING;
         statusObj.dataInput.lncrnaFile = true;
         break;
@@ -348,10 +326,7 @@ export class Controller {
     [POST] /loadAnnotation
     Download annotation file
   */
-  public static async loadAnnotation(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async loadAnnotation(req: Request, res: Response): Promise<void> {
     const { annotationType } = req.body;
     const identifier = req.query.identifier as string;
     const statusObj: StatusObj = getStatusObj(identifier);
@@ -403,10 +378,7 @@ export class Controller {
     [GET] /instantiateLacenAndCheck
     Create Lacen object and check values
   */
-  public static async instantiateLacenAndCheck(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async instantiateLacenAndCheck(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const command = `${variablesNames.LACEN_OBJ} <- initLacen(datCounts=${variablesNames.COUNT},datExpression=${variablesNames.RAW_EXPRESSION},datTraits=${variablesNames.LABEL},annotationData=${variablesNames.CODING},ncAnnotation=${variablesNames.NONCODING});`;
@@ -434,10 +406,7 @@ export class Controller {
     [GET] /filterTransform
     Filter and transform data
   */
-  public static async filterTransform(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async filterTransform(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const command = `${variablesNames.LACEN_OBJ} <- filterTransform(lacenObject=${variablesNames.LACEN_OBJ},pThreshold=0.01,fcThreshold=1,topVarGenes=5000,filterMethod='DEG');`;
@@ -462,19 +431,15 @@ export class Controller {
     [POST] /selectOutlierSample
     If no data is received, generate simple dendrogram. Generate dendrogram with height line
   */
-  public static async selectOutlierSample(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async selectOutlierSample(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
-    const height = req.body.height || "FALSE";
+    const height = req.body.height && req.body.height !== "null" ? req.body.height : "FALSE";
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const filename =
       height === "FALSE"
         ? strObj.filename.dendrogramSuffix
         : `${height}${strObj.filename.dendrogramSuffix}`;
     const filepath = `${strObj.path.imgs}/${filename}`;
-
     const heightCmd = `${variablesNames.LACEN_OBJ}['height']=${height};`;
     const dendrogramImgPathCmd = `${variablesNames.DENDROGRAM_IMG} = '${filepath}';`;
     const keepSamplesCommand = `selectOutlierSample(${variablesNames.LACEN_OBJ},plot=TRUE,filename='${filepath}',height=${height});`;
@@ -518,10 +483,7 @@ export class Controller {
   /*
     [GET] /generateThresholdPlot
   */
-  public static async generateThresholdPlot(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async generateThresholdPlot(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
 
@@ -560,10 +522,7 @@ export class Controller {
   /*
     [POST] /setIndicePower
   */
-  public static async setIndicePower(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async setIndicePower(req: Request, res: Response): Promise<void> {
     const { power } = req.body;
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
@@ -642,10 +601,7 @@ export class Controller {
     [GET] /skipBootstrap
     Skip the bootstrap setp and set default values for variables
   */
-  public static async skipBootstrap(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async skipBootstrap(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const command = `${variablesNames.LACEN_OBJ}['cutBootstrap'] = FALSE;`;
@@ -670,10 +626,7 @@ export class Controller {
     [GET] /generateNetwork
     Generate network and create variable with img path
   */
-  public static async generateNetwork(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async generateNetwork(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const statusObj: StatusObj = getStatusObj(identifier);
@@ -729,10 +682,7 @@ export class Controller {
   /*
     [GET] /generateStackedBarplot
   */
-  public static async generateStackedBarplot(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async generateStackedBarplot(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
 
@@ -771,10 +721,7 @@ export class Controller {
   /*
     [POST] /generateHeatmap
   */
-  public static async generateHeatmap(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async generateHeatmap(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const moduleNum = req.body.moduleNum as number;
     const submoduleNum = req.body.submoduleNum as number;
@@ -814,10 +761,7 @@ export class Controller {
   /*
     [GET] /getHeatmapImgs
   */
-  public static async getHeatmapImgs(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  public static async getHeatmapImgs(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
 

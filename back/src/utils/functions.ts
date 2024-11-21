@@ -109,17 +109,10 @@ export function appendToLog(identifier: string, txt: string): void {
   if (!fs.existsSync(logfilePath)) {
     fs.writeFileSync(logfilePath, "");
   }
-  fs.appendFileSync(
-    logfilePath,
-    `${nowStr} ${txt}${txt.length === 0 ? "\n" : ""}`,
-  );
+  fs.appendFileSync(logfilePath, `${nowStr} ${txt}${txt.length === 0 ? "\n" : ""}`);
 }
 
-async function runSpawn(
-  identifier: string,
-  command: string,
-  args: string[] = [],
-) {
+async function runSpawn(identifier: string, command: string, args: string[] = []) {
   const process = spawn(command, args);
   let firstStdOut = true;
   let firstStdErr = true;
@@ -129,9 +122,7 @@ async function runSpawn(
   process.stdout.on("data", (data) => {
     stdoutArray.push(data);
     if (firstStdOut) {
-      console.log(
-        `${BLUE}[EXEC_OUT]${NC}: ${stdoutArray.join("")}${BLUE}[.]${NC}`,
-      );
+      console.log(`${BLUE}[EXEC_OUT]${NC}: ${stdoutArray.join("")}${BLUE}[.]${NC}`);
       firstStdOut = false;
     } else {
       console.log(stdoutArray.join(""));
@@ -154,9 +145,7 @@ async function runSpawn(
       return;
     }
     if (firstStdErr) {
-      console.log(
-        `${RED}[EXEC_ERR]${NC}: ${stderrArray.join("")}${RED}[.]${NC}`,
-      );
+      console.log(`${RED}[EXEC_ERR]${NC}: ${stderrArray.join("")}${RED}[.]${NC}`);
       firstStdErr = false;
     } else {
       console.log(`${RED}[...]${NC} ${stderrArray.join("")}${RED}[.]${NC}`);
@@ -180,9 +169,7 @@ async function runSpawn(
         return resolve(stdoutArray.join(""));
       }
       appendToLog(identifier, `[EXEC_REJECT] ${stderrArray.join("")}`);
-      return reject(
-        new Error(`Error code: ${code}\nMsg: ${stderrArray.join("")}`),
-      );
+      return reject(new Error(`Error code: ${code}\nMsg: ${stderrArray.join("")}`));
     });
   });
 }
@@ -241,9 +228,7 @@ export function getBaseStatusObj(): StatusObj {
 
 export function getStatusObj(identifier: string) {
   const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
-  const fileContent = fs.readFileSync(
-    `${strObj.path.main}/${strObj.filename.status}`,
-  );
+  const fileContent = fs.readFileSync(`${strObj.path.main}/${strObj.filename.status}`);
   const statusObj: StatusObj = JSON.parse(fileContent.toString());
   return statusObj;
 }
@@ -251,10 +236,7 @@ export function getStatusObj(identifier: string) {
 export function saveStatusObj(identifier: string, statusObj: StatusObj) {
   const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
   const jsonContent = JSON.stringify(statusObj);
-  fs.writeFileSync(
-    `${strObj.path.main}/${strObj.filename.status}`,
-    jsonContent,
-  );
+  fs.writeFileSync(`${strObj.path.main}/${strObj.filename.status}`, jsonContent);
   io.emit(LacenEventsEnum.UPDATE_STATUS_OBJ, jsonContent);
 }
 

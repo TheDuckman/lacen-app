@@ -26,16 +26,8 @@ router.get("/getVariables", Controller.getVariables);
 router.post("/runCommand", Controller.runCommand);
 router.post("/getImgPath", Controller.getImgPath);
 router.post("/setParameters", Controller.setParameters);
-router.post(
-  "/uploadDataFiles",
-  upload.fields(fields),
-  Controller.uploadDataFiles,
-);
-router.post(
-  "/uploadAnnotationFile",
-  upload.single("file"),
-  Controller.uploadAnnotationFile,
-);
+router.post("/uploadDataFiles", upload.fields(fields), Controller.uploadDataFiles);
+router.post("/uploadAnnotationFile", upload.single("file"), Controller.uploadAnnotationFile);
 router.post("/loadAnnotation", Controller.loadAnnotation);
 router.get("/instantiateLacenAndCheck", Controller.instantiateLacenAndCheck);
 router.get("/filterTransform", Controller.filterTransform);

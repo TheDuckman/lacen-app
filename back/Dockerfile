@@ -4,9 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Building backend
 COPY package.json yarn.lock ./
 RUN yarn --ignore-optional --production=false install && yarn cache clean --force
-ENV PATH /opt/app/node_modules/.bin:$PATH
+ENV PATH=/opt/app/node_modules/.bin:$PATH
 ARG NODE_ENV=production
-ENV NODE_ENV $NODE_ENV
+ENV NODE_ENV=$NODE_ENV
 # ENV RDATA_PATH=/LACEN_saved_files
 
 RUN groupadd -g 513 node
@@ -27,7 +27,7 @@ WORKDIR /opt/app
 USER node
 COPY --chown=node:node package.json yarn.lock ./
 RUN yarn install --no-optional --production=false && yarn cache clean --force
-ENV PATH /opt/app/node_modules/.bin:$PATH
+ENV PATH=/opt/app/node_modules/.bin:$PATH
 
 
 COPY src src
