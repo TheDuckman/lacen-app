@@ -20,6 +20,7 @@ RUN apt-get --assume-yes --fix-missing install tcl8.6-dev
 RUN apt-get --assume-yes --fix-missing install libharfbuzz-dev libfribidi-dev
 RUN apt-get --assume-yes --fix-missing install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 RUN apt-get --assume-yes --fix-missing install lsof strace
+RUN apt-get --assume-yes --fix-missing install libudunits2-dev libgit2-dev libgdal-dev
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 # Adding new repos
