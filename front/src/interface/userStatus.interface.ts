@@ -22,10 +22,12 @@ export interface UserStatusObj {
     indice: number;
   };
   bootstraping: {
+    started: boolean;
     skipped: boolean;
     done: boolean;
   };
   creatingNetwork: {
+    started: boolean;
     done: boolean;
   };
   networkModules: {

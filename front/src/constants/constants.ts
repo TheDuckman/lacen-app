@@ -21,8 +21,12 @@ export const socketEvents = {
   UPDATE_STATUS_OBJ: 'update-status-obj',
   THRESHOLD_PLOT_OK: 'threshold-plot-ok',
   THRESHOLD_PLOT_ERROR: 'threshold-plot-error',
+  // bootstrap
+  BOOTSTRAP_STARTED: 'bootstrap-started',
   BOOTSTRAP_OK: 'bootstrap-ok',
   BOOTSTRAP_ERROR: 'bootstrap-error',
+  // network
+  GENERATE_NETWORK_STARTED: 'generate-network-started',
   GENERATE_NETWORK_OK: 'generate-network-ok',
   GENERATE_NETWORK_ERROR: 'generate-network-error',
   STACKED_BARPLOT_OK: 'stacked-barplot-ok',

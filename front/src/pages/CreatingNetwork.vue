@@ -4,8 +4,10 @@
   import useEmitter from '@/composables/useEmitter';
   import { socketEvents } from '@/constants/constants';
   import { ToastTypes } from '@/constants/ui.constants';
-  import { IncomingEventObject } from '@/interface/api.interface';
+  import { useUserDataStore } from '@/stores/userData';
   import { onBeforeMount, ref } from 'vue';
+
+  const userDataStore = useUserDataStore();
 
   // Loading
   const loading = ref(false);
@@ -14,8 +16,6 @@
   const emitter = useEmitter();
 
   const generateNetwork = async (): Promise<void> => {
-    loading.value = true;
-    // this.$root.$emit('loading-on', true);
     try {
       await requester.generateNetwork();
     } catch (error) {
@@ -24,6 +24,10 @@
   };
 
   onBeforeMount(() => {
+    socket.on(socketEvents.GENERATE_NETWORK_STARTED, () => {
+      loading.value = true;
+      emitter.emit(ToastTypes.WARNING, 'Network creation started...');
+    });
     socket.on(socketEvents.GENERATE_NETWORK_OK, () => {
       loading.value = false;
       emitter.emit(ToastTypes.SUCCESS, 'Network created');
@@ -32,6 +36,13 @@
       loading.value = false;
       emitter.emit(ToastTypes.ERROR, 'Network creation failed');
     });
+
+    // Setup page
+    if (userDataStore.statusObj?.creatingNetwork.started) {
+      // enables loading state to wait for bootstrap result
+      loading.value = true;
+      emitter.emit(ToastTypes.WARNING, 'Network creation in progress...');
+    }
   });
 </script>
 

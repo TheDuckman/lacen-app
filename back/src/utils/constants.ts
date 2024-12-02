@@ -77,8 +77,12 @@ export enum LacenEventsEnum {
   ANNOTATION_OK = "annotation-ok",
   THRESHOLD_PLOT_OK = "threshold-plot-ok",
   THRESHOLD_PLOT_ERROR = "threshold-plot-error",
+  // bootstrap
+  BOOTSTRAP_STARTED = "bootstrap-started",
   BOOTSTRAP_OK = "bootstrap-ok",
   BOOTSTRAP_ERROR = "bootstrap-error",
+  // network
+  GENERATE_NETWORK_STARTED = "generate-network-started",
   GENERATE_NETWORK_OK = "generate-network-ok",
   GENERATE_NETWORK_ERROR = "generate-network-error",
   TERMINAL_STDOUT = "terminal-stdout",

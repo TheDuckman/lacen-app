@@ -72,9 +72,11 @@ export interface StatusObj {
   };
   bootstraping: {
     skipped: boolean;
+    started: boolean;
     done: boolean;
   };
   creatingNetwork: {
+    started: boolean;
     done: boolean;
   };
   networkModules: {

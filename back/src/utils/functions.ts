@@ -209,9 +209,11 @@ export function getBaseStatusObj(): StatusObj {
     },
     bootstraping: {
       skipped: false,
+      started: false,
       done: false,
     },
     creatingNetwork: {
+      started: false,
       done: false,
     },
     networkModules: {

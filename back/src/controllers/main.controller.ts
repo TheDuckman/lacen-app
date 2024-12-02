@@ -574,7 +574,9 @@ export class Controller {
       `printf "${strObj.cmd.lacen}${strObj.cmd.load}${bootstrapCommand}${modGroupsCmd}${bsStabilityCmd}${strObj.cmd.save}" | Rscript /dev/stdin`,
     ])
       .then((resp) => {
+        statusObj.bootstraping.started = false;
         statusObj.bootstraping.done = true;
+        statusObj.bootstraping.skipped = false;
         saveStatusObj(identifier, statusObj);
         emitEvent({
           event: LacenEventsEnum.BOOTSTRAP_OK,
@@ -586,6 +588,10 @@ export class Controller {
         });
       })
       .catch((err) => {
+        statusObj.bootstraping.started = false;
+        statusObj.bootstraping.done = false;
+        statusObj.bootstraping.skipped = false;
+        saveStatusObj(identifier, statusObj);
         emitEvent({
           event: LacenEventsEnum.BOOTSTRAP_ERROR,
           identifier,
@@ -593,6 +599,17 @@ export class Controller {
         });
         console.log("Err", { err });
       });
+
+    // Signals bootstrap has started
+    statusObj.bootstraping.started = true;
+    statusObj.bootstraping.done = false;
+    statusObj.bootstraping.skipped = false;
+    saveStatusObj(identifier, statusObj);
+    emitEvent({
+      event: LacenEventsEnum.BOOTSTRAP_STARTED,
+      identifier,
+      msg: null,
+    });
     res.status(HttpStatus.OK);
     res.end();
   }
@@ -658,6 +675,8 @@ export class Controller {
       `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${enrGraphCmd}${strObj.cmd.save}" | Rscript /dev/stdin`,
     ])
       .then(async (resp) => {
+        // Signals that the process is done
+        statusObj.creatingNetwork.started = false;
         statusObj.creatingNetwork.done = true;
         saveStatusObj(identifier, statusObj);
         emitEvent({
@@ -668,6 +687,9 @@ export class Controller {
         console.log(resp);
       })
       .catch((err) => {
+        statusObj.creatingNetwork.started = false;
+        statusObj.creatingNetwork.done = false;
+        saveStatusObj(identifier, statusObj);
         emitEvent({
           event: LacenEventsEnum.GENERATE_NETWORK_ERROR,
           identifier,
@@ -675,6 +697,16 @@ export class Controller {
         });
         console.log("Err", err);
       });
+
+    // Signals that the process has started
+    statusObj.creatingNetwork.started = true;
+    statusObj.creatingNetwork.done = false;
+    saveStatusObj(identifier, statusObj);
+    emitEvent({
+      event: LacenEventsEnum.GENERATE_NETWORK_STARTED,
+      identifier,
+      msg: null,
+    });
     res.status(HttpStatus.OK);
     res.end();
   }

@@ -1,11 +1,14 @@
 <script setup lang="ts">
   import requester from '@/api/requester';
   import useEmitter from '@/composables/useEmitter';
-  import { socketEvents } from '@/constants/constants';
+  import { socketEvents, variablesNames } from '@/constants/constants';
   import { ToastTypes } from '@/constants/ui.constants';
-  import { onBeforeMount, ref } from 'vue';
+  import { computed, onBeforeMount, ref } from 'vue';
   import socket from '@/api/socket';
-  import { IncomingEventObject } from '@/interface/api.interface';
+  import { useUserDataStore } from '@/stores/userData';
+  import { cleanRString, getImgUrl } from '@/utils/functions.utils';
+
+  const userDataStore = useUserDataStore();
 
   // Loading
   const loading = ref(false);
@@ -13,9 +16,19 @@
   // Emitter
   const emitter = useEmitter();
 
+  // Images
+  const modgroupsImg = ref();
+  const stabilityImg = ref();
+
+  // Is done
+  const isDone = computed(
+    () =>
+      userDataStore.statusObj?.bootstraping.done ||
+      userDataStore.statusObj?.bootstraping.skipped,
+  );
+
+  // Functions
   const runBootstrap = async () => {
-    loading.value = true;
-    // this.$root.$emit('loading-on', true);
     try {
       await requester.runBootstrap();
     } catch (error) {
@@ -25,25 +38,50 @@
   const skipStep = async () => {
     loading.value = true;
     try {
-      // this.$root.$emit('loading-on');
       await requester.skipBootstrap();
       emitter.emit(ToastTypes.WARNING, 'Bootstrap skipped');
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Ops...');
     } finally {
       loading.value = false;
-      // this.$root.$emit('loading-off');
     }
   };
-  onBeforeMount(() => {
+  const getImages = async () => {
+    loading.value = true;
+    const imgsStrs: string[] = await Promise.all([
+      requester.getImgPath(variablesNames.BOOTSTRAP_MODGROUPS),
+      requester.getImgPath(variablesNames.BOOTSTRAP_STABILITY),
+    ]);
+    loading.value = false;
+    modgroupsImg.value = cleanRString(imgsStrs[0]);
+    stabilityImg.value = cleanRString(imgsStrs[1]);
+  };
+
+  // Hook
+  onBeforeMount(async () => {
+    socket.on(socketEvents.BOOTSTRAP_STARTED, () => {
+      loading.value = true;
+      emitter.emit(ToastTypes.WARNING, 'Bootstraping started');
+    });
     socket.on(socketEvents.BOOTSTRAP_OK, () => {
       loading.value = false;
       emitter.emit(ToastTypes.SUCCESS, 'Bootstraping done');
+      getImages();
     });
     socket.on(socketEvents.BOOTSTRAP_ERROR, () => {
       loading.value = false;
       emitter.emit(ToastTypes.ERROR, 'Bootstraping error!');
     });
+
+    // Setup page
+    if (userDataStore.statusObj?.bootstraping.done) {
+      // Fetch images
+      await getImages();
+    } else if (userDataStore.statusObj?.bootstraping.started) {
+      // enables loading state to wait for bootstrap result
+      loading.value = true;
+      emitter.emit(ToastTypes.WARNING, 'Bootstraping in progress...');
+    }
   });
 </script>
 
@@ -63,6 +101,7 @@
                 <LacenBtn
                   @click="runBootstrap"
                   :loading="loading"
+                  :disabled="isDone"
                   size="x-large"
                   color="info"
                   icon="mdi-shoe-print"
@@ -75,6 +114,7 @@
                 <LacenBtn
                   @click="skipStep"
                   :loading="loading"
+                  :disabled="isDone"
                   size="x-large"
                   color="warning"
                   icon="mdi-debug-step-over"
@@ -90,14 +130,14 @@
       <!-- IMAGE -->
       <ImageCard
         title="Modgroups"
-        :imgUrl="undefined"
+        :imgUrl="getImgUrl(modgroupsImg)"
       />
     </v-col>
     <v-col cols="6">
       <!-- IMAGE -->
       <ImageCard
         title="Stability"
-        :imgUrl="undefined"
+        :imgUrl="getImgUrl(stabilityImg)"
       />
     </v-col>
   </v-row>

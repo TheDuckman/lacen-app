@@ -86,6 +86,7 @@
       userDataStore.isDataInputDone &&
       !userDataStore.statusObj?.instantiateAndCheck
     ) {
+      useEmitter().emit(ToastTypes.WARNING, 'Validating data...');
       try {
         await requester.instantiateLacenAndCheck();
       } catch (error) {
