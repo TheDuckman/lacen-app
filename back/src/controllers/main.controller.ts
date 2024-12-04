@@ -408,7 +408,7 @@ export class Controller {
   public static async filterTransform(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
-    const command = `${variablesNames.LACEN_OBJ} <- filterTransform(lacenObject=${variablesNames.LACEN_OBJ},pThreshold=0.01,fcThreshold=1,topVarGenes=5000,filterMethod='DEG');`;
+    const command = `${variablesNames.LACEN_OBJ} <- filterTransform(lacenObject=${variablesNames.LACEN_OBJ},pThreshold=0.01,fcThreshold=1,filterMethod='DEG');`; // removed "topVarGenes=5000"
     try {
       const result = await runProcessSpawn(identifier, "sh", [
         "-c",
@@ -471,12 +471,24 @@ export class Controller {
   */
   public static async acceptHeight(req: Request, res: Response): Promise<void> {
     const identifier = req.query.identifier as string;
-
-    const statusObj: StatusObj = getStatusObj(identifier);
-    statusObj.removingOutliers.valueAccepted = true;
-    saveStatusObj(identifier, statusObj);
-    res.status(HttpStatus.OK);
-    res.end();
+    const height = req.body.height && req.body.height !== "null" ? req.body.height : "FALSE";
+    const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
+    const command = `${variablesNames.LACEN_OBJ} <- cutOutlierSample(${variablesNames.LACEN_OBJ},height=${height});`;
+    try {
+      await runProcessSpawn(identifier, "sh", [
+        "-c",
+        `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${strObj.cmd.save}" | Rscript /dev/stdin`,
+      ]);
+      const statusObj: StatusObj = getStatusObj(identifier);
+      statusObj.removingOutliers.valueAccepted = true;
+      saveStatusObj(identifier, statusObj);
+      res.status(HttpStatus.OK);
+      res.end();
+    } catch (error) {
+      console.error(error);
+      res.status(HttpStatus.EXPECTATION_FAILED);
+      res.send(error);
+    }
   }
 
   /*
@@ -525,7 +537,7 @@ export class Controller {
     const { power } = req.body;
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
-    const command = `${variablesNames.LACEN_OBJ}['indicePower'] = ${power};`;
+    const command = `${variablesNames.LACEN_OBJ} <- selectSoftThreshold(${variablesNames.LACEN_OBJ},indicePower=${power});`;
     try {
       const result = await runProcessSpawn(identifier, "sh", [
         "-c",
@@ -560,7 +572,7 @@ export class Controller {
     let bootstrapCommand = `${variablesNames.LACEN_OBJ} <- lacenBootstrap(lacenObject=${variablesNames.LACEN_OBJ},`;
     bootstrapCommand = `${bootstrapCommand}numberOfIterations=2,`;
     bootstrapCommand = `${bootstrapCommand}maxBlockSize=${statusObj.settings.maxBlockSize},`;
-    bootstrapCommand = `${bootstrapCommand}parallel=TRUE,`;
+    bootstrapCommand = `${bootstrapCommand}parallel=TRUE,`; // should be 4? or TRUE?
     bootstrapCommand = `${bootstrapCommand}nparallel=${statusObj.settings.numCores},`;
     bootstrapCommand = `${bootstrapCommand}WGCNAThreads=${statusObj.settings.numCores},`;
     bootstrapCommand = `${bootstrapCommand}cutBootstrap=FALSE,`;
