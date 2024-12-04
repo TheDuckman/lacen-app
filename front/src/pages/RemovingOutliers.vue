@@ -71,7 +71,8 @@
   const dendrogramImg = ref<string | null>(null);
   const disableGenerateBtn = computed(
     () =>
-      !userDataStore.isFilterAndTransformDone || getImgUrl(dendrogramImg.value),
+      !userDataStore.isFilterAndTransformDone ||
+      !!getImgUrl(dendrogramImg.value),
   );
   const disableRegenerateBtn = computed(
     () => `${height.value}` === `${userDataStore.currentHeight}`,

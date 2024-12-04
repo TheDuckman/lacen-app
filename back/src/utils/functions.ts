@@ -62,6 +62,7 @@ export function pathsFilesCommands(identifier: string): PathsFilesCommandsDto {
       enrichedGraphImg: userFilename.ENRICHED_GRAPH,
       stackedBarPlotImg: userFilename.STACKEDBARPLOT,
       bootstrapCsv: userFilename.BOOTSTRAP_CSV,
+      networkLog: userFilename.NETWORK_LOG,
     },
   };
 
@@ -211,6 +212,7 @@ export function getBaseStatusObj(): StatusObj {
       skipped: false,
       started: false,
       done: false,
+      cutValue: -1, // -1 indicates not selected
     },
     creatingNetwork: {
       started: false,

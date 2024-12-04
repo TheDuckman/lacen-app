@@ -307,7 +307,6 @@ export class Controller {
         `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${strObj.cmd.save}" | Rscript /dev/stdin`,
       ]);
       saveStatusObj(identifier, statusObj);
-
       emitEvent({
         event: LacenEventsEnum.ANNOTATION_OK,
         identifier,
@@ -640,6 +639,35 @@ export class Controller {
   }
 
   /*
+    [POST] /setCutBootstrap
+    Set the value of cutBootstrap variable
+  */
+  public static async setCutBootstrap(req: Request, res: Response): Promise<void> {
+    const { cutBootstrapValue } = req.body;
+    const identifier = req.query.identifier as string;
+    const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
+
+    const cutBootstrapCommand = `${variablesNames.LACEN_OBJ} <- setBootstrap(lacenObject=${variablesNames.LACEN_OBJ},(${variablesNames.BOOTSTRAP_CUT}=${parseInt(cutBootstrapValue)}));`;
+    try {
+      const result = await runProcessSpawn(identifier, "sh", [
+        "-c",
+        `printf "${strObj.cmd.lacen}${strObj.cmd.load}${cutBootstrapCommand}${strObj.cmd.save}" | Rscript /dev/stdin`,
+      ]);
+      const statusObj: StatusObj = getStatusObj(identifier);
+      statusObj.bootstraping.cutValue = parseInt(cutBootstrapValue);
+      saveStatusObj(identifier, statusObj);
+      res.status(HttpStatus.OK);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(HttpStatus.EXPECTATION_FAILED);
+      res.send(error);
+    }
+    res.status(HttpStatus.OK);
+    res.end();
+  }
+
+  /*
     [GET] /generateNetwork
     Generate network and create variable with img path
   */
@@ -648,10 +676,11 @@ export class Controller {
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
     const statusObj: StatusObj = getStatusObj(identifier);
     const enrGraphImgPath = `${strObj.path.imgs}/${strObj.filename.enrichedGraphImg}`;
+    const networkLogPath = `${strObj.path.logs}/${strObj.filename.networkLog}`;
 
     const enrGraphCmd = `${variablesNames.ENRICHEDGRAPH_IMG} <- '${enrGraphImgPath}';`;
     let command = `${variablesNames.LACEN_OBJ} <- summarizeAndEnrichModules(lacenObject=${variablesNames.LACEN_OBJ},`;
-    command = `${command}numberOfIterations=2,`;
+    // command = `${command}numberOfIterations=2,`;
     // WGCNA parameters
     command = `${command}maxBlockSize=${statusObj.settings.maxBlockSize},`;
     command = `${command}TOMType='unsigned',`;
@@ -667,8 +696,10 @@ export class Controller {
     command = `${command}orgdb='org.Hs.eg.db',`;
     command = `${command}reducedTermsThreshold=0.7,`;
     command = `${command}filename='${enrGraphImgPath}',`;
-    // #Log parameters
-    command = `${command}loh=FALSE);`;
+    // # Hidden params
+    command = `${command}mod_path='.',`;
+    command = `${command}log_path='${networkLogPath}',`;
+    command = `${command}log=TRUE);`;
 
     runProcessSpawn(identifier, "sh", [
       "-c",

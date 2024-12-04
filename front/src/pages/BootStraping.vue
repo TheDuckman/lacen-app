@@ -20,12 +20,33 @@
   const modgroupsImg = ref();
   const stabilityImg = ref();
 
-  // Is done
-  const isDone = computed(
-    () =>
-      userDataStore.statusObj?.bootstraping.done ||
-      userDataStore.statusObj?.bootstraping.skipped,
+  // Cut value
+  const cutBootstrap = ref(
+    userDataStore.statusObj?.bootstraping.cutValue === -1
+      ? undefined
+      : userDataStore.statusObj?.bootstraping.cutValue,
   );
+  const submitCutVal = async () => {
+    if (!cutBootstrap.value || cutBootstrap.value < 0) {
+      emitter.emit(ToastTypes.WARNING, 'Select a positive integer');
+    } else {
+      loading.value = true;
+      try {
+        await requester.cutBootstrap(cutBootstrap.value);
+        emitter.emit(ToastTypes.SUCCESS, 'Value set');
+      } catch (error) {
+        emitter.emit(ToastTypes.ERROR, 'Ops...');
+      }
+      loading.value = false;
+    }
+  };
+
+  // Is done or skipped
+  const isDone = computed(() => userDataStore.statusObj?.bootstraping.done);
+  const isSkipped = computed(
+    () => userDataStore.statusObj?.bootstraping.skipped,
+  );
+  const isDoneOrSkipped = computed(() => isDone.value || isSkipped.value);
 
   // Functions
   const runBootstrap = async () => {
@@ -101,7 +122,7 @@
                 <LacenBtn
                   @click="runBootstrap"
                   :loading="loading"
-                  :disabled="isDone"
+                  :disabled="isDoneOrSkipped"
                   size="x-large"
                   color="info"
                   icon="mdi-shoe-print"
@@ -114,7 +135,7 @@
                 <LacenBtn
                   @click="skipStep"
                   :loading="loading"
-                  :disabled="isDone"
+                  :disabled="isDoneOrSkipped"
                   size="x-large"
                   color="warning"
                   icon="mdi-debug-step-over"
@@ -123,6 +144,39 @@
               </div>
             </v-col>
           </v-row>
+        </v-card-text>
+      </LacenCard>
+      <!-- CUT BOOTSTRAP -->
+      <LacenCard
+        v-if="isDone"
+        title="Cut Bootstrap"
+        :iconNumber="2"
+      >
+        <v-card-text>
+          <div class="d-flex flex-row justify-center">
+            <div>
+              <v-text-field
+                v-model="cutBootstrap"
+                type="number"
+                label="Cut bootstrap"
+                variant="outlined"
+                density="comfortable"
+                persistent-hint
+                hint="Select a positive integer"
+                class="mr-3"
+              />
+            </div>
+            <LacenBtn
+              @click="submitCutVal"
+              :loading="loading"
+              :disabled="!cutBootstrap"
+              size="large"
+              color="success"
+              icon="mdi-check"
+              class="mt-1 ml-3"
+              text=""
+            />
+          </div>
         </v-card-text>
       </LacenCard>
     </v-col>

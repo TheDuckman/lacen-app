@@ -25,6 +25,7 @@ export interface UserStatusObj {
     started: boolean;
     skipped: boolean;
     done: boolean;
+    cutValue: number;
   };
   creatingNetwork: {
     started: boolean;

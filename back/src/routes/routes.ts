@@ -37,6 +37,7 @@ router.get("/generateThresholdPlot", Controller.generateThresholdPlot);
 router.post("/setIndicePower", Controller.setIndicePower);
 router.get("/runBootstrap", Controller.runBootstrap);
 router.get("/skipBootstrap", Controller.skipBootstrap);
+router.post("/setCutBootstrap", Controller.setCutBootstrap);
 router.get("/generateNetwork", Controller.generateNetwork);
 router.get("/generateStackedBarplot", Controller.generateStackedBarplot);
 router.post("/generateHeatmap", Controller.generateHeatmap);

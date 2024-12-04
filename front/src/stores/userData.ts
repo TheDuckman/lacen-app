@@ -73,7 +73,11 @@ export const useUserDataStore = defineStore('userData', () => {
     return !!statusObj.value && statusObj.value.bootstraping.skipped;
   });
   const bootstrapingDone = computed(() => {
-    return !!statusObj.value && statusObj.value.bootstraping.done;
+    return (
+      !!statusObj.value &&
+      statusObj.value.bootstraping.done &&
+      statusObj.value.bootstraping.cutValue > -1
+    );
   });
   watch(bootstrapingSkipped, () => {
     useAppStateStore().stepStatus.bootstraping.done = false;

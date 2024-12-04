@@ -28,6 +28,7 @@ export interface FilesDto {
   enrichedGraphImg: string;
   stackedBarPlotImg: string;
   bootstrapCsv: string;
+  networkLog: string;
 }
 
 export interface PathsFilesCommandsDto {
@@ -74,6 +75,7 @@ export interface StatusObj {
     skipped: boolean;
     started: boolean;
     done: boolean;
+    cutValue: number; // -1 indicates not selected
   };
   creatingNetwork: {
     started: boolean;

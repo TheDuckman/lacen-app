@@ -46,6 +46,7 @@ export const userFilename = {
   ENRICHED_GRAPH: "enrichedgraph.png",
   STACKEDBARPLOT: "stackedBarPlot.png",
   BOOTSTRAP_CSV: "bootstrap.csv",
+  NETWORK_LOG: "networkLog.txt",
 };
 
 export const defaultFolders = {

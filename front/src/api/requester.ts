@@ -133,6 +133,11 @@ const skipBootstrap = async (): Promise<unknown> => {
   return res.data;
 };
 
+const cutBootstrap = async (cutBootstrapValue: number): Promise<void> => {
+  const res = await axios.post('setCutBootstrap', { cutBootstrapValue });
+  return res.data;
+};
+
 const generateNetwork = async (): Promise<unknown> => {
   const res = await axios.get('generateNetwork');
   return res.data;
@@ -177,6 +182,7 @@ export default {
   setIndicePower,
   runBootstrap,
   skipBootstrap,
+  cutBootstrap,
   generateNetwork,
   generateStackedBarplot,
   generateHeatmap,
