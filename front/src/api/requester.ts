@@ -138,6 +138,13 @@ const cutBootstrap = async (cutBootstrapValue: number): Promise<void> => {
   return res.data;
 };
 
+const downloadBootstrapCsv = async (): Promise<unknown> => {
+  const res = await axios.get('downloadBootstrapCsv', {
+    responseType: 'blob',
+  });
+  return res.data;
+};
+
 const generateNetwork = async (): Promise<unknown> => {
   const res = await axios.get('generateNetwork');
   return res.data;
@@ -183,6 +190,7 @@ export default {
   runBootstrap,
   skipBootstrap,
   cutBootstrap,
+  downloadBootstrapCsv,
   generateNetwork,
   generateStackedBarplot,
   generateHeatmap,

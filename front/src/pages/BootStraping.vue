@@ -77,6 +77,20 @@
     modgroupsImg.value = cleanRString(imgsStrs[0]);
     stabilityImg.value = cleanRString(imgsStrs[1]);
   };
+  const downloadFile = async () => {
+    try {
+      const resp = (await requester.downloadBootstrapCsv()) as any;
+      const blob = new Blob([resp], {
+        type: 'csv',
+      });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'bootstrap.csv';
+      link.click();
+    } catch (error) {
+      emitter.emit(ToastTypes.ERROR, 'Ops...');
+    }
+  };
 
   // Hook
   onBeforeMount(async () => {
@@ -114,6 +128,7 @@
       <LacenCard
         title="Bootstraping"
         :iconNumber="1"
+        style="height: 90%"
       >
         <v-card-text>
           <v-row>
@@ -146,10 +161,13 @@
           </v-row>
         </v-card-text>
       </LacenCard>
+    </v-col>
+    <v-col cols="6">
       <!-- CUT BOOTSTRAP -->
       <LacenCard
         v-if="isDone"
         title="Cut Bootstrap"
+        style="height: 90%"
         :iconNumber="2"
       >
         <v-card-text>
@@ -175,6 +193,26 @@
               icon="mdi-check"
               class="mt-1 ml-3"
               text=""
+            />
+          </div>
+        </v-card-text>
+      </LacenCard>
+    </v-col>
+    <v-col cols="6">
+      <LacenCard
+        v-if="isDone"
+        title="Download CSV"
+        style="height: 90%"
+      >
+        <v-card-text>
+          <div class="d-flex flex-column align-center my-5 ml-5">
+            <LacenBtn
+              @click="downloadFile"
+              :loading="loading"
+              size="large"
+              color="info"
+              icon="mdi-download"
+              text="Click to download"
             />
           </div>
         </v-card-text>
