@@ -33,6 +33,7 @@ export const variablesNames = {
   SUMMARIZED_LIST: "summList",
   ENRICHEDGRAPH_IMG: "enrichedGraphImg",
   STACKEDBARPLOT_IMG: "stackedBarPlotImg",
+  HEATMAP_IMG: "heatmap_[moduleNum]_[submoduleNum]",
 };
 
 export const userFilename = {

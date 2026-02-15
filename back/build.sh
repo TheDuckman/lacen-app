@@ -13,7 +13,12 @@ IMAGE="gpato/lacen-app"
 echo "Building gpato/lacen-app"
 
 # build
-docker build --no-cache . -t $IMAGE:$VERSION
+
+# # build FROM SCRATCH
+# docker build --no-cache . -t $IMAGE:$VERSION
+
+# Normal build REUSING STEPS
+docker build . -t $IMAGE:$VERSION
 
 # tags
 docker tag $IMAGE:$VERSION $IMAGE:latest

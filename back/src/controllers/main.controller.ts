@@ -127,6 +127,30 @@ export class Controller {
   }
 
   /*
+    [POST] /getHeatmapImgPath
+    Get partial img path
+  */
+  public static async getHeatmapImgPath(req: Request, res: Response): Promise<void> {
+    const identifier = req.query.identifier as string;
+    const imgName = req.body.imgName as string;
+    const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
+
+    try {
+      const result = await runProcessSpawn(identifier, "sh", [
+        "-c",
+        `printf "${strObj.cmd.load}${imgName}" | Rscript /dev/stdin`,
+      ]);
+      const partPath = cleanRString(result);
+
+      const filename = partPath.split("/").pop();
+      res.send(`${strObj.path.frontendHeatmaps}/${filename}`);
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+      res.send(error);
+    }
+  }
+
+  /*
     [GET] /getVariables
     Lists the current variables inside the R environment
   */
@@ -784,8 +808,10 @@ export class Controller {
     const identifier = req.query.identifier as string;
     const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
 
+    // Gets the path to save the img and create variable in R with this path
     const filepath = `${strObj.path.imgs}/${strObj.filename.stackedBarPlotImg}`;
     const stackedBarPlotImgCmd = `${variablesNames.STACKEDBARPLOT_IMG} = '${filepath}';`;
+    // Runs the command to generate the stacked barplot and save the img path in a variable
     const command = `stackedBarplot(lacenObject=${variablesNames.LACEN_OBJ},filename='${filepath}',plot=TRUE);`;
 
     runProcessSpawn(identifier, "sh", [
@@ -827,15 +853,18 @@ export class Controller {
 
     const heatmapImgName: string = getHeatmapImgName(moduleNum, submoduleNum);
     const filepath = `${strObj.path.heatmapImgs}/${heatmapImgName}`;
+    const heatmapVarName = variablesNames.HEATMAP_IMG.replace(
+      "[moduleNum]",
+      `${moduleNum}`,
+    ).replace("[submoduleNum]", `${submoduleNum}`);
+    const heatmapImgCmd = `${heatmapVarName} = '${filepath}';`;
     const command = `heatmapTopConnectivity(lacenObject=${
       variablesNames.LACEN_OBJ
-    },module=${moduleNum},submodule=${
-      submoduleNum || "FALSE"
-    },filename='${filepath}',hmDimensions=FALSE,removeNonDEG=FALSE,outTSV=FALSE,plothm=FALSE);`;
+    },module=${moduleNum},submodule=${submoduleNum || "FALSE"},filename='${filepath}');`;
 
     runProcessSpawn(identifier, "sh", [
       "-c",
-      `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${strObj.cmd.save}" | Rscript /dev/stdin`,
+      `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${heatmapImgCmd}${strObj.cmd.save}" | Rscript /dev/stdin`,
     ])
       .then(async (resp) => {
         emitEvent({

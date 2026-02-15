@@ -12,6 +12,7 @@ export const variablesNames = {
   INDICEPOWER: 'indicePower',
   ENRICHEDGRAPH_IMG: 'enrichedGraphImg',
   STACKEDBARPLOT_IMG: 'stackedBarPlotImg',
+  HEATMAP_IMG: 'heatmap_[moduleNum]_[submoduleNum]',
 };
 
 export const socketEvents = {
@@ -31,6 +32,7 @@ export const socketEvents = {
   GENERATE_NETWORK_ERROR: 'generate-network-error',
   STACKED_BARPLOT_OK: 'stacked-barplot-ok',
   STACKED_BARPLOT_ERROR: 'stacked-barplot-error',
+  HEATMAP_GENERATED: 'heatmap-generated',
 };
 
 export const HTTP_STATUS_FOLDER_FOUND = 227;

@@ -25,6 +25,7 @@ router.get("/getVariables", Controller.getVariables);
 // router.post('/saveFile', Controller.saveFile);
 router.post("/runCommand", Controller.runCommand);
 router.post("/getImgPath", Controller.getImgPath);
+router.post("/getHeatmapImgPath", Controller.getHeatmapImgPath);
 router.post("/setParameters", Controller.setParameters);
 router.post("/uploadDataFiles", upload.fields(fields), Controller.uploadDataFiles);
 router.post("/uploadAnnotationFile", upload.single("file"), Controller.uploadAnnotationFile);

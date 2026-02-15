@@ -47,6 +47,11 @@ const getImgPath = async (imgName: string): Promise<string> => {
   return res.data;
 };
 
+const getHeatmapImgPath = async (imgName: string): Promise<string> => {
+  const res = await axios.post('getHeatmapImgPath', { imgName });
+  return res.data;
+};
+
 const setParameters = async (
   maxBlockSize: number,
   numCores: number,
@@ -54,16 +59,6 @@ const setParameters = async (
   const res = await axios.post('setParameters', { maxBlockSize, numCores });
   return res.data;
 };
-
-// const test = async (): Promise<string> => {
-//   const res = await axios.get<string>('test');
-//   return res.data;
-// };
-
-// const loadFile = async (): Promise<string> => {
-//   const res = await axios.get<string>('loadFile');
-//   return res.data;
-// };
 
 const uploadDataFiles = async (formData: FormData): Promise<string> => {
   const res = await axios.post<string>('uploadDataFiles', formData, {
@@ -172,6 +167,7 @@ export default {
   checkIdentifier,
   archiveRdata,
   getImgPath,
+  getHeatmapImgPath,
   // test,
   // saveFile,
   // loadFile,

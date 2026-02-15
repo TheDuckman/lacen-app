@@ -28,7 +28,7 @@
   );
   const submitCutVal = async () => {
     if (!cutBootstrap.value || cutBootstrap.value < 0) {
-      emitter.emit(ToastTypes.WARNING, 'Select a positive integer');
+      emitter.emit(ToastTypes.WARNING, 'Select a non-negative value');
     } else {
       loading.value = true;
       try {
@@ -180,7 +180,7 @@
                 variant="outlined"
                 density="comfortable"
                 persistent-hint
-                hint="Select a positive integer"
+                hint="Select a non-negative [0-1] value"
                 class="mr-3"
               />
             </div>
