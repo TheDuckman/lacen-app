@@ -1,6 +1,6 @@
 {
   "name": "lacen-app",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Lacen App",
   "main": "server.ts",
   "author": "Gabriel Pato <gtg.pato@gmail.com>",

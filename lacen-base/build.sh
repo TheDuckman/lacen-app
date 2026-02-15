@@ -1,5 +1,5 @@
 #! bin/sh
-VERSION=3.0.3
+VERSION=3.1.0
 
 IMAGE="gpato/lacen-base"
 

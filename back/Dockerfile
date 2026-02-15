@@ -1,4 +1,4 @@
-FROM gpato/lacen-base:latest
+FROM gpato/lacen-base:3.1.0
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Building backend

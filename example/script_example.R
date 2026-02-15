@@ -57,6 +57,8 @@ selectOutlierSample(
 )
 
 # Set the height
+## (!!! ACHO QUE ISSO NAO FUNCIONA)
+## Talvez funcione, mas não seta o $height to lacenObj
 lacenObject <- cutOutlierSample(
   lacenObject,
   height = 220
@@ -76,18 +78,28 @@ lacenObject <- selectSoftThreshold(
 )
 
 # Bootstrapping
+# lacenObject <- lacenBootstrap(
+#   lacenObject = lacenObject,
+#   numberOfIterations = 100,
+#   maxBlockSize = 40000,
+#   parallel = 4,
+#   nparallel = 4,
+#   WGCNAThreads = 4,
+#   cutBootstrap = FALSE,
+#   nThreads = 32,
+#   csvPath = "bootstrap.csv",
+#   pathModGroupsPlot = "3_modgroups.png",
+#   pathStabilityPlot = "4_stability_bootstrap.png"
+# )
+
 lacenObject <- lacenBootstrap(
-  lacenObject = lacenObject,
+  lacenObject = current_lacen_object,
   numberOfIterations = 100,
-  maxBlockSize = 40000,
-  parallel = 4,
-  nparallel = 4,
-  WGCNAThreads = 4,
-  cutBootstrap = FALSE,
-  nThreads = 32,
-  csvPath = "bootstrap.csv",
-  pathModGroupsPlot = "3_modgroups.png",
-  pathStabilityPlot = "4_stability_bootstrap.png"
+  maxBlockSize = maxBlockSize,
+  csvPath = bootstrap_csv_path,
+  pathModGroupsPlot = mod_groups_plot_path,
+  pathStabilityPlot = stability_plot_path,
+  nThreads = nThreads
 )
 
 # cutbootstrap is the height selected by the user, based on 4_stability_bootstrap.png

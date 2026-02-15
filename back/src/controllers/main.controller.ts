@@ -570,15 +570,16 @@ export class Controller {
     const modGroupsCmd = `${variablesNames.BOOTSTRAP_MODGROUPS} <- '${modGrpImgPath}';`;
     const bsStabilityCmd = `${variablesNames.BOOTSTRAP_STABILITY} <- '${stabRtImgPath}';`;
     let bootstrapCommand = `${variablesNames.LACEN_OBJ} <- lacenBootstrap(lacenObject=${variablesNames.LACEN_OBJ},`;
-    bootstrapCommand = `${bootstrapCommand}numberOfIterations=2,`;
+    bootstrapCommand = `${bootstrapCommand}numberOfIterations=10,`;
     bootstrapCommand = `${bootstrapCommand}maxBlockSize=${statusObj.settings.maxBlockSize},`;
-    bootstrapCommand = `${bootstrapCommand}parallel=TRUE,`; // should be 4? or TRUE?
-    bootstrapCommand = `${bootstrapCommand}nparallel=${statusObj.settings.numCores},`;
-    bootstrapCommand = `${bootstrapCommand}WGCNAThreads=${statusObj.settings.numCores},`;
-    bootstrapCommand = `${bootstrapCommand}cutBootstrap=FALSE,`;
+    // bootstrapCommand = `${bootstrapCommand}parallel=TRUE,`; // should be 4? or TRUE?
+    // bootstrapCommand = `${bootstrapCommand}nparallel=${statusObj.settings.numCores},`;
+    // bootstrapCommand = `${bootstrapCommand}WGCNAThreads=${statusObj.settings.numCores},`;
+    // bootstrapCommand = `${bootstrapCommand}cutBootstrap=FALSE,`;
     bootstrapCommand = `${bootstrapCommand}csvPath='${strObj.path.data}/${strObj.filename.bootstrapCsv}',`;
     bootstrapCommand = `${bootstrapCommand}pathModGroupsPlot='${modGrpImgPath}',`;
-    bootstrapCommand = `${bootstrapCommand}pathStabilityPlot='${stabRtImgPath}');`;
+    bootstrapCommand = `${bootstrapCommand}pathStabilityPlot='${stabRtImgPath}',`;
+    bootstrapCommand = `${bootstrapCommand}nThreads=${statusObj.settings.numCores});`;
 
     runProcessSpawn(identifier, "sh", [
       "-c",
