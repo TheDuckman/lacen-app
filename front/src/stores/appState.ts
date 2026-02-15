@@ -48,9 +48,9 @@ export const useAppStateStore = defineStore('appStateStore', () => {
       current: false,
       done: false,
     },
-    heatmap: {
-      title: 'Heatmap',
-      pageName: 'HeatMap',
+    rnaNetworkAnalysis: {
+      title: 'RNA Network Analysis',
+      pageName: 'RnaNetworkAnalysis',
       current: false,
       done: false,
     },

@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <h1>Heatmap</h1>
+  <h1>lncRNA-Centric Network Analysis</h1>
   <v-row dense>
     <v-col cols="12">
       <LacenCard

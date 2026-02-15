@@ -7,7 +7,7 @@ import BootStraping from '@/pages/BootStraping.vue';
 import CreatingNetwork from '@/pages/CreatingNetwork.vue';
 import NetworkModules from '@/pages/NetworkModules.vue';
 import EnrichedModules from '@/pages/EnrichedModules.vue';
-import HeatMap from '@/pages/HeatMap.vue';
+import RnaNetworkAnalysis from '@/pages/RnaNetworkAnalysis.vue';
 
 const routes = [
   {
@@ -51,9 +51,9 @@ const routes = [
     component: EnrichedModules,
   },
   {
-    path: '/heatmap',
-    name: 'HeatMap',
-    component: HeatMap,
+    path: '/rna-network-analysis',
+    name: 'RnaNetworkAnalysis',
+    component: RnaNetworkAnalysis,
   },
 ];
 

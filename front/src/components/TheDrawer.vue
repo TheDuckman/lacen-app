@@ -29,7 +29,7 @@
         return steps.value.creatingNetwork.done;
       case 'EnrichedModules':
         return steps.value.networkModules.done;
-      case 'Heatmap':
+      case 'RnaNetworkAnalysis':
         return steps.value.enrichedModules.done;
       default:
         return false;
