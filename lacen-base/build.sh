@@ -1,13 +1,20 @@
 #! bin/sh
-VERSION=3.1.0
+VERSION=4.0.0
 
 IMAGE="gpato/lacen-base"
 
+# Create logs directory if it doesn't exist
+mkdir -p logs
+
+# Generate timestamp for log file
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+LOG_FILE="logs/build_${TIMESTAMP}.log"
+
 # build REUSING STEPS
-docker build . -t $IMAGE:$VERSION --progress=plain > builder.log 2>&1
+docker build . -t $IMAGE:$VERSION --progress=plain > "$LOG_FILE" 2>&1
 
 # build FROM SCRATCH
-# docker build --no-cache . -t $IMAGE:$VERSION --progress=plain > builder.log 2>&1
+# docker build --no-cache . -t $IMAGE:$VERSION --progress=plain > "$LOG_FILE" 2>&1
 
 # tags
 docker tag $IMAGE:$VERSION $IMAGE:latest
