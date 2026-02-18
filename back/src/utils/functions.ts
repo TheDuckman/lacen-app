@@ -44,10 +44,12 @@ export function pathsFilesCommands(identifier: string): PathsFilesCommandsDto {
     path: {
       frontendImg: `${identifier}/${defaultFolders.IMGS_FOLDER}`,
       frontendHeatmaps: `${identifier}/${defaultFolders.IMGS_FOLDER}/${defaultFolders.HEATMAP_IMG_FOLDER}`,
+      frontendLncrna: `${identifier}/${defaultFolders.LNCRNA_FOLDER}`,
       main: identifierFolder,
       data: `${identifierFolder}/${defaultFolders.RDATA_FOLDER}`,
       imgs: `${identifierFolder}/${defaultFolders.IMGS_FOLDER}`,
       heatmapImgs: `${identifierFolder}/${defaultFolders.IMGS_FOLDER}/${defaultFolders.HEATMAP_IMG_FOLDER}`,
+      lncrna: `${identifierFolder}/${defaultFolders.LNCRNA_FOLDER}`,
       logs: `${identifierFolder}/${defaultFolders.LOGS_FOLDER}`,
       uploads: `${identifierFolder}/${defaultFolders.UPLOADS_FOLDER}`,
     },
@@ -224,7 +226,7 @@ export function getBaseStatusObj(): StatusObj {
     enrichedModules: {
       done: false,
     },
-    heatmap: {
+    lncrnaNetworkAnalysis: {
       done: false,
     },
   };
@@ -246,4 +248,18 @@ export function saveStatusObj(identifier: string, statusObj: StatusObj) {
 
 export function getHeatmapImgName(moduleNum: number, submoduleNum: number) {
   return `heatmap_${moduleNum}_${submoduleNum}.png`;
+}
+
+export function getLncrnaNetworkAnalysisFileNames(lncrna: string): {
+  imgEnrichment: string;
+  imgNetwork: string;
+  dataEnrichment: string;
+  dataConnectivity: string;
+} {
+  return {
+    imgEnrichment: `${lncrna}_enr.png`,
+    imgNetwork: `${lncrna}_net.png`,
+    dataEnrichment: `${lncrna}_data_enr.csv`,
+    dataConnectivity: `${lncrna}_data_connect.csv`,
+  };
 }

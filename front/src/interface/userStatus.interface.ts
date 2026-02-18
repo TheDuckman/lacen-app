@@ -37,7 +37,7 @@ export interface UserStatusObj {
   enrichedModules: {
     done: boolean;
   };
-  heatmap: {
+  lncrnaNetworkAnalysis: {
     done: boolean;
   };
 }

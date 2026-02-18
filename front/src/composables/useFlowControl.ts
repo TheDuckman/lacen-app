@@ -37,8 +37,13 @@ export default function useFlowControl() {
         name: appStateStore.stepStatus.networkModules.pageName,
       });
     }
+    if (!userDataStore.enrichedModulesDone) {
+      return router.push({
+        name: appStateStore.stepStatus.enrichedModules.pageName,
+      });
+    }
     return router.push({
-      name: appStateStore.stepStatus.enrichedModules.pageName,
+      name: appStateStore.stepStatus.lncrnaNetworkAnalysis.pageName,
     });
   };
 

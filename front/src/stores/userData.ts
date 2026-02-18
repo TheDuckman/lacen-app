@@ -103,6 +103,22 @@ export const useUserDataStore = defineStore('userData', () => {
     useAppStateStore().stepStatus.networkModules.done = true;
   });
 
+  // enriched modules
+  const enrichedModulesDone = computed(() => {
+    return !!statusObj.value && statusObj.value.enrichedModules.done;
+  });
+  watch(enrichedModulesDone, () => {
+    useAppStateStore().stepStatus.enrichedModules.done = true;
+  });
+
+  // RNA network analysis
+  const lncrnaNetworkAnalysisDone = computed(() => {
+    return !!statusObj.value && statusObj.value.lncrnaNetworkAnalysis.done;
+  });
+  watch(lncrnaNetworkAnalysisDone, () => {
+    useAppStateStore().stepStatus.lncrnaNetworkAnalysis.done = true;
+  });
+
   // R backend variables
   const variables = ref<any>([]);
   const updateVars = (vars: any[]) => {
@@ -130,6 +146,7 @@ export const useUserDataStore = defineStore('userData', () => {
     bootstrapingSkipped,
     createNetworkDone,
     networkModulesDone,
+    enrichedModulesDone,
     // R backend variables
     variables,
     updateVars,

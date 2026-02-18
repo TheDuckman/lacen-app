@@ -9,10 +9,12 @@ export interface SaveLoadCmdDto {
 export interface PathsDto {
   frontendImg: string;
   frontendHeatmaps: string;
+  frontendLncrna: string;
   main: string;
   data: string;
   imgs: string;
   heatmapImgs: string;
+  lncrna: string;
   logs: string;
   uploads: string;
 }
@@ -87,7 +89,7 @@ export interface StatusObj {
   enrichedModules: {
     done: boolean;
   };
-  heatmap: {
+  lncrnaNetworkAnalysis: {
     done: boolean;
   };
 }

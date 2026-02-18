@@ -16,6 +16,7 @@ import {
   emitEvent,
   getHeatmapImgName,
   getNowStr,
+  getLncrnaNetworkAnalysisFileNames,
   getStatusObj,
   pathsFilesCommands,
   runProcessSpawn,
@@ -867,6 +868,9 @@ export class Controller {
       `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${heatmapImgCmd}${strObj.cmd.save}" | Rscript /dev/stdin`,
     ])
       .then(async (resp) => {
+        const statusObj: StatusObj = getStatusObj(identifier);
+        statusObj.enrichedModules.done = true;
+        saveStatusObj(identifier, statusObj);
         emitEvent({
           event: LacenEventsEnum.HEATMAP_GENERATED,
           identifier,
@@ -910,5 +914,59 @@ export class Controller {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR);
       res.send(error);
     }
+  }
+
+  /*
+    [POST] /generateRnaNetworkAnalysisFiles
+  */
+  public static async generateRnaNetworkAnalysisFiles(req: Request, res: Response): Promise<void> {
+    const identifier = req.query.identifier as string;
+    const lncrna = req.body.lncrna as string;
+    const strObj: PathsFilesCommandsDto = pathsFilesCommands(identifier);
+
+    const filenames = getLncrnaNetworkAnalysisFileNames(lncrna);
+
+    // Files to generate:
+    const filePaths = {
+      lncrnaNetworkImgPath: `${strObj.path.lncrna}/${filenames.imgNetwork}`,
+      lncrnaEnrichmentImgPath: `${strObj.path.lncrna}/${filenames.imgEnrichment}`,
+      lncrnaEnrichmentCsvPath: `${strObj.path.lncrna}/${filenames.dataEnrichment}`,
+      lncrnaConnectivityCsvPath: `${strObj.path.lncrna}/${filenames.dataConnectivity}`,
+    };
+
+    const lncrnaImgCmd = `${lncrna} = list(lncrnaNetworkImgPath = '${filePaths.lncrnaNetworkImgPath}', lncrnaEnrichmentImgPath = '${filePaths.lncrnaEnrichmentImgPath}', lncrnaEnrichmentCsvPath = '${filePaths.lncrnaEnrichmentCsvPath}', lncrnaConnectivityCsvPath = '${filePaths.lncrnaConnectivityCsvPath}');`;
+    const command = `lncRNAEnrich(lacenObject=${
+      variablesNames.LACEN_OBJ
+    },lncName='${lncrna}',enrPath='${filePaths.lncrnaEnrichmentImgPath}',enrCsvPath='${filePaths.lncrnaEnrichmentCsvPath}',connecPath='${filePaths.lncrnaConnectivityCsvPath}',netPath='${filePaths.lncrnaNetworkImgPath}');`;
+
+    runProcessSpawn(identifier, "sh", [
+      "-c",
+      `printf "${strObj.cmd.lacen}${strObj.cmd.load}${command}${lncrnaImgCmd}${strObj.cmd.save}" | Rscript /dev/stdin`,
+    ])
+      .then(async (resp) => {
+        const statusObj: StatusObj = getStatusObj(identifier);
+        statusObj.lncrnaNetworkAnalysis.done = true;
+        saveStatusObj(identifier, statusObj);
+        emitEvent({
+          event: LacenEventsEnum.LNCRNA_NETWORK_ANALYSIS_GENERATED,
+          identifier,
+          msg: [
+            `${strObj.path.frontendLncrna}/${filenames.imgNetwork}`,
+            `${strObj.path.frontendLncrna}/${filenames.imgEnrichment}`,
+            `${strObj.path.frontendLncrna}/${filenames.dataEnrichment}`,
+            `${strObj.path.frontendLncrna}/${filenames.dataConnectivity}`,
+          ],
+        });
+      })
+      .catch((err) => {
+        emitEvent({
+          event: LacenEventsEnum.LNCRNA_NETWORK_ANALYSIS_ERROR,
+          identifier,
+          msg: null,
+        });
+        console.log("Err", err);
+      });
+    res.status(HttpStatus.OK);
+    res.end();
   }
 }

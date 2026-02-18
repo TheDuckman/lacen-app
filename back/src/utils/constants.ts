@@ -54,6 +54,7 @@ export const defaultFolders = {
   RDATA_FOLDER: "data",
   IMGS_FOLDER: "imgs",
   HEATMAP_IMG_FOLDER: "heatmaps",
+  LNCRNA_FOLDER: "lncrna",
   LOGS_FOLDER: "logs",
   UPLOADS_FOLDER: "uploads",
 };
@@ -93,4 +94,6 @@ export enum LacenEventsEnum {
   STACKED_BARPLOT_ERROR = "stacked-barplot-error",
   HEATMAP_GENERATED = "heatmap-generated",
   HEATMAP_ERROR = "heatmap-error",
+  LNCRNA_NETWORK_ANALYSIS_GENERATED = "lncrna-network-analysis-generated",
+  LNCRNA_NETWORK_ANALYSIS_ERROR = "lncrna-network-analysis-error",
 }

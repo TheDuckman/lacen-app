@@ -33,6 +33,8 @@ export const socketEvents = {
   STACKED_BARPLOT_OK: 'stacked-barplot-ok',
   STACKED_BARPLOT_ERROR: 'stacked-barplot-error',
   HEATMAP_GENERATED: 'heatmap-generated',
+  LNCRNA_NETWORK_ANALYSIS_GENERATED: 'lncrna-network-analysis-generated',
+  LNCRNA_NETWORK_ANALYSIS_ERROR: 'lncrna-network-analysis-error',
 };
 
 export const HTTP_STATUS_FOLDER_FOUND = 227;

@@ -14,5 +14,5 @@ export interface StepsStatus {
   creatingNetwork: StepData;
   networkModules: StepData;
   enrichedModules: StepData;
-  rnaNetworkAnalysis: StepData;
+  lncrnaNetworkAnalysis: StepData;
 }

@@ -48,7 +48,7 @@ export const useAppStateStore = defineStore('appStateStore', () => {
       current: false,
       done: false,
     },
-    rnaNetworkAnalysis: {
+    lncrnaNetworkAnalysis: {
       title: 'RNA Network Analysis',
       pageName: 'RnaNetworkAnalysis',
       current: false,
