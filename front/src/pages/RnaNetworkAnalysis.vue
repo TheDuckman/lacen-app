@@ -37,12 +37,14 @@
     };
   };
 
-  const addToList = (name: string) => {
-    const upper = name.toUpperCase();
-    if (!lncRnaList.value.includes(upper)) {
-      lncRnaList.value.unshift(upper);
-      currentImage.value[upper] = 0;
-    }
+  const fetchFolders = async () => {
+    const folders = await requester.getLncRnaFolders();
+    lncRnaList.value = folders;
+    folders.forEach((name) => {
+      if (currentImage.value[name] === undefined) {
+        currentImage.value[name] = 0;
+      }
+    });
   };
 
   const generateLncRnaFiles = async () => {
@@ -96,23 +98,21 @@
   onBeforeMount(async () => {
     // Fetch existing lncRNA folders on page load
     try {
-      const folders = await requester.getLncRnaFolders();
-      folders.forEach((name) => {
-        lncRnaList.value.push(name);
-        currentImage.value[name] = 0;
-      });
+      await fetchFolders();
     } catch {
       // lncrna directory may not exist yet — ignore
     }
 
     socket.on(
       socketEvents.LNCRNA_NETWORK_ANALYSIS_GENERATED,
-      (obj: IncomingEventObject) => {
+      async (obj: IncomingEventObject) => {
         if (obj.identifier !== userDataStore.identifier) {
           return;
         }
-        if (lncRna.value) {
-          addToList(lncRna.value);
+        try {
+          await fetchFolders();
+        } catch {
+          // ignore
         }
         loading.value = false;
         emitter.emit(ToastTypes.SUCCESS, 'lncRNA analysis files generated');
@@ -166,10 +166,13 @@
     v-if="lncRnaList.length"
     class="mt-4"
     multiple
+    variant="accordion"
   >
     <v-expansion-panel
       v-for="name in lncRnaList"
       :key="name"
+      elevation="0"
+      style="border: 1px solid #ccc; margin-bottom: 4px"
     >
       <v-expansion-panel-title>
         {{ name }}
@@ -198,6 +201,7 @@
         <div class="d-flex flex-row ga-3 mt-3">
           <v-btn
             color="primary"
+            flat
             prepend-icon="mdi-download"
             :loading="downloadingEnr[name]"
             @click="downloadEnrichmentCsv(name)"
@@ -206,6 +210,7 @@
           </v-btn>
           <v-btn
             color="primary"
+            flat
             prepend-icon="mdi-download"
             :loading="downloadingConn[name]"
             @click="downloadConnectivityCsv(name)"
