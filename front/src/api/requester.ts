@@ -2,6 +2,7 @@ import axios from 'axios';
 import qs from 'querystring';
 import { useUserDataStore } from '@/stores/userData';
 // import { HeatmapImgObj } from '@/interface/api.interface';
+import { HeatmapImgObj } from '@/interface/api.interface';
 
 // backend base URL
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
@@ -181,10 +182,10 @@ const downloadLncRnaFile = async (
   return res.data;
 };
 
-// const getHeatmapImgs = async (): Promise<HeatmapImgObj[]> => {
-//   const res = await axios.get('getHeatmapImgs');
-//   return res.data;
-// };
+const getHeatmapImgs = async (): Promise<HeatmapImgObj[]> => {
+  const res = await axios.get<HeatmapImgObj[]>('getHeatmapImgs');
+  return res.data;
+};
 
 export default {
   checkIdentifier,
@@ -216,5 +217,5 @@ export default {
   generateRnaNetworkAnalysisFiles,
   getLncRnaFolders,
   downloadLncRnaFile,
-  // getHeatmapImgs,
+  getHeatmapImgs,
 };

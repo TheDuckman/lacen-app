@@ -2,28 +2,41 @@
   import requester from '@/api/requester';
   import { onBeforeMount, ref } from 'vue';
   import socket from '@/api/socket';
-  import { socketEvents, variablesNames } from '@/constants/constants';
-  import { IncomingEventObject } from '@/interface/api.interface';
+  import { socketEvents } from '@/constants/constants';
+  import {
+    HeatmapImgObj,
+    IncomingEventObject,
+  } from '@/interface/api.interface';
   import { useUserDataStore } from '@/stores/userData';
   import useEmitter from '@/composables/useEmitter';
   import { ToastTypes } from '@/constants/ui.constants';
-  import { cleanRString, getImgUrl } from '@/utils/functions.utils';
+  import { getImgUrl } from '@/utils/functions.utils';
 
   const userDataStore = useUserDataStore();
-
-  // Loading
-  const loading = ref(false);
-
-  // Emitter
   const emitter = useEmitter();
 
-  // Images
-  const images = ref<string[]>([]);
-  const currentImage = ref(0);
+  // Loading state for triggering a new heatmap generation
+  const loading = ref(false);
+
+  // List of heatmap images fetched from server
+  const heatmapList = ref<HeatmapImgObj[]>([]);
 
   // Form
   const moduleNumber = ref();
   const submoduleNumber = ref();
+
+  const parsePanelTitle = (filename: string): string => {
+    const match = filename.match(/heatmap_(\d+)_(\d+)\.png/);
+    if (match) {
+      return `Module: ${match[1]} — Submodule: ${match[2]}`;
+    }
+    return filename;
+  };
+
+  const fetchHeatmaps = async () => {
+    const imgs = await requester.getHeatmapImgs();
+    heatmapList.value = imgs ?? [];
+  };
 
   const generateHeatmap = async () => {
     loading.value = true;
@@ -34,31 +47,31 @@
       );
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Ops...');
+      loading.value = false;
     }
   };
-  const getHeatmapImg = async () => {
-    loading.value = true;
-    const heatmapResult: string | null = (await requester.getHeatmapImgPath(
-      variablesNames.HEATMAP_IMG.replace(
-        '[moduleNum]',
-        moduleNumber.value,
-      ).replace('[submoduleNum]', submoduleNumber.value),
-    )) as string;
-    loading.value = false;
 
-    images.value.push(cleanRString(heatmapResult));
-    emitter.emit(ToastTypes.SUCCESS, 'Heatmap generated successfully');
-  };
+  onBeforeMount(async () => {
+    // Fetch existing heatmaps on page load
+    try {
+      await fetchHeatmaps();
+    } catch {
+      // heatmaps directory may be empty — ignore
+    }
 
-  onBeforeMount(() => {
     socket.on(
       socketEvents.HEATMAP_GENERATED,
       async (obj: IncomingEventObject) => {
         if (obj.identifier !== userDataStore.identifier) {
           return;
         }
-        await getHeatmapImg();
+        try {
+          await fetchHeatmaps();
+        } catch {
+          // ignore
+        }
         loading.value = false;
+        emitter.emit(ToastTypes.SUCCESS, 'Heatmap generated successfully');
       },
     );
   });
@@ -66,6 +79,8 @@
 
 <template>
   <h1>Enriched modules</h1>
+
+  <!-- Input card -->
   <LacenCard
     title="Module selection"
     :iconNumber="1"
@@ -106,19 +121,29 @@
       </div>
     </v-card-text>
   </LacenCard>
-  <v-window
-    v-model="currentImage"
-    show-arrows
+
+  <!-- One expansion panel per heatmap -->
+  <v-expansion-panels
+    v-if="heatmapList.length"
+    class="mt-4"
+    multiple
+    variant="accordion"
   >
-    <v-window-item
-      v-for="(imgPath, index) in images"
-      :value="index"
-      :key="imgPath"
+    <v-expansion-panel
+      v-for="img in heatmapList"
+      :key="img.name"
+      elevation="0"
+      style="border: 1px solid #ccc; margin-bottom: 4px"
     >
-      <ImageCard
-        title="Image"
-        :imgUrl="getImgUrl(imgPath)"
-      />
-    </v-window-item>
-  </v-window>
+      <v-expansion-panel-title>
+        {{ parsePanelTitle(img.name) }}
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <ImageCard
+          :title="parsePanelTitle(img.name)"
+          :imgUrl="getImgUrl(img.path)"
+        />
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
