@@ -165,6 +165,17 @@ const generateRnaNetworkAnalysisFiles = async (
   return res.data;
 };
 
+const downloadLncRnaFile = async (
+  lncrna: string,
+  fileType: 'enr' | 'connectivity',
+): Promise<Blob> => {
+  const res = await axios.get<Blob>('downloadLncRnaFile', {
+    params: { lncrna, fileType },
+    responseType: 'blob',
+  });
+  return res.data;
+};
+
 // const getHeatmapImgs = async (): Promise<HeatmapImgObj[]> => {
 //   const res = await axios.get('getHeatmapImgs');
 //   return res.data;
@@ -198,5 +209,6 @@ export default {
   generateStackedBarplot,
   generateHeatmap,
   generateRnaNetworkAnalysisFiles,
+  downloadLncRnaFile,
   // getHeatmapImgs,
 };
