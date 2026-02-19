@@ -939,6 +939,15 @@ export class Controller {
       lncrnaConnectivityCsvPath: `${strObj.path.lncrna}/${lncrna}/${filenames.dataConnectivity}`,
     };
 
+    // Ensure lncrna base folder and per-lncRNA subfolder exist before R writes files
+    const lncrnaSubfolderPath = `${strObj.path.lncrna}/${lncrna}`;
+    if (!fs.existsSync(strObj.path.lncrna)) {
+      fs.mkdirSync(strObj.path.lncrna, { recursive: true });
+    }
+    if (!fs.existsSync(lncrnaSubfolderPath)) {
+      fs.mkdirSync(lncrnaSubfolderPath, { recursive: true });
+    }
+
     const lncrnaImgCmd = `${lncrna} = list(lncrnaNetworkImgPath = '${filePaths.lncrnaNetworkImgPath}', lncrnaEnrichmentImgPath = '${filePaths.lncrnaEnrichmentImgPath}', lncrnaEnrichmentCsvPath = '${filePaths.lncrnaEnrichmentCsvPath}', lncrnaConnectivityCsvPath = '${filePaths.lncrnaConnectivityCsvPath}');`;
     const command = `lncRNAEnrich(lacenObject=${
       variablesNames.LACEN_OBJ
