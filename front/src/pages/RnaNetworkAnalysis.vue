@@ -10,29 +10,43 @@
   import { getImgUrl } from '@/utils/functions.utils';
 
   const userDataStore = useUserDataStore();
-
-  // Loading
-  const loading = ref(false);
-  const downloadingEnr = ref(false);
-  const downloadingConn = ref(false);
-
-  // Emitter
   const emitter = useEmitter();
 
-  // Images
-  const imgNetworkPath = ref<string | null>(null);
-  const imgEnrichmentPath = ref<string | null>(null);
+  // Loading state for triggering a new analysis
+  const loading = ref(false);
 
-  // CSV paths (relative, used as keys for download requests)
-  const currentImage = ref(0);
+  // Per-lncRNA download loading states
+  const downloadingEnr = ref<Record<string, boolean>>({});
+  const downloadingConn = ref<Record<string, boolean>>({});
 
-  // Form
+  // Per-panel current image slide index
+  const currentImage = ref<Record<string, number>>({});
+
+  // List of previously analyzed lncRNAs (folder names)
+  const lncRnaList = ref<string[]>([]);
+
+  // Form input
   const lncRna = ref<string>();
+
+  // Build static image paths from the lncRNA name
+  const getLncRnaImgPaths = (name: string) => {
+    const id = userDataStore.identifier;
+    return {
+      network: `${id}/lncrna/${name}/${name}_net.png`,
+      enrichment: `${id}/lncrna/${name}/${name}_enr.png`,
+    };
+  };
+
+  const addToList = (name: string) => {
+    const upper = name.toUpperCase();
+    if (!lncRnaList.value.includes(upper)) {
+      lncRnaList.value.unshift(upper);
+      currentImage.value[upper] = 0;
+    }
+  };
 
   const generateLncRnaFiles = async () => {
     loading.value = true;
-    imgNetworkPath.value = null;
-    imgEnrichmentPath.value = null;
     if (!lncRna.value) {
       emitter.emit(ToastTypes.ERROR, 'RNA required');
       loading.value = false;
@@ -55,53 +69,56 @@
     URL.revokeObjectURL(url);
   };
 
-  const downloadEnrichmentCsv = async () => {
-    if (!lncRna.value) {
-      return;
-    }
-    downloadingEnr.value = true;
+  const downloadEnrichmentCsv = async (name: string) => {
+    downloadingEnr.value[name] = true;
     try {
-      const blob = await requester.downloadLncRnaFile(lncRna.value, 'enr');
-      triggerDownload(blob, `${lncRna.value.toUpperCase()}_enrichment.csv`);
+      const blob = await requester.downloadLncRnaFile(name, 'enr');
+      triggerDownload(blob, `${name}_enrichment.csv`);
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Failed to download enrichment CSV');
     } finally {
-      downloadingEnr.value = false;
+      downloadingEnr.value[name] = false;
     }
   };
 
-  const downloadConnectivityCsv = async () => {
-    if (!lncRna.value) return;
-    downloadingConn.value = true;
+  const downloadConnectivityCsv = async (name: string) => {
+    downloadingConn.value[name] = true;
     try {
-      const blob = await requester.downloadLncRnaFile(
-        lncRna.value,
-        'connectivity',
-      );
-      triggerDownload(blob, `${lncRna.value.toUpperCase()}_connectivity.csv`);
+      const blob = await requester.downloadLncRnaFile(name, 'connectivity');
+      triggerDownload(blob, `${name}_connectivity.csv`);
     } catch (error) {
       emitter.emit(ToastTypes.ERROR, 'Failed to download connectivity CSV');
     } finally {
-      downloadingConn.value = false;
+      downloadingConn.value[name] = false;
     }
   };
 
-  onBeforeMount(() => {
+  onBeforeMount(async () => {
+    // Fetch existing lncRNA folders on page load
+    try {
+      const folders = await requester.getLncRnaFolders();
+      folders.forEach((name) => {
+        lncRnaList.value.push(name);
+        currentImage.value[name] = 0;
+      });
+    } catch {
+      // lncrna directory may not exist yet — ignore
+    }
+
     socket.on(
       socketEvents.LNCRNA_NETWORK_ANALYSIS_GENERATED,
-      async (obj: IncomingEventObject) => {
+      (obj: IncomingEventObject) => {
         if (obj.identifier !== userDataStore.identifier) {
           return;
         }
-        // obj.msg is [imgNetworkPath, imgEnrichmentPath, csvEnrPath, csvConnPath]
-        const [netImg, enrImg] = obj.msg as string[];
-        imgNetworkPath.value = netImg;
-        imgEnrichmentPath.value = enrImg;
-        currentImage.value = 0;
+        if (lncRna.value) {
+          addToList(lncRna.value);
+        }
         loading.value = false;
         emitter.emit(ToastTypes.SUCCESS, 'lncRNA analysis files generated');
       },
     );
+
     socket.on(socketEvents.LNCRNA_NETWORK_ANALYSIS_ERROR, () => {
       loading.value = false;
       emitter.emit(ToastTypes.ERROR, 'lncRNA analysis failed');
@@ -111,8 +128,10 @@
 
 <template>
   <h1>lncRNA-Centric Network Analysis</h1>
+
+  <!-- Input card -->
   <LacenCard
-    title="Module selection"
+    title="Run Analysis"
     :iconNumber="1"
     style="height: 90%"
   >
@@ -142,56 +161,59 @@
     </v-card-text>
   </LacenCard>
 
-  <template v-if="imgNetworkPath || imgEnrichmentPath">
-    <v-window
-      v-model="currentImage"
-      show-arrows
-      class="mt-4"
+  <!-- One expansion panel per analyzed lncRNA -->
+  <v-expansion-panels
+    v-if="lncRnaList.length"
+    class="mt-4"
+    multiple
+  >
+    <v-expansion-panel
+      v-for="name in lncRnaList"
+      :key="name"
     >
-      <v-window-item
-        v-if="imgNetworkPath"
-        :value="0"
-      >
-        <ImageCard
-          title="Network Graph"
-          :imgUrl="getImgUrl(imgNetworkPath)"
-        />
-      </v-window-item>
-      <v-window-item
-        v-if="imgEnrichmentPath"
-        :value="1"
-      >
-        <ImageCard
-          title="Enrichment Graph"
-          :imgUrl="getImgUrl(imgEnrichmentPath)"
-        />
-      </v-window-item>
-    </v-window>
+      <v-expansion-panel-title>
+        {{ name }}
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <!-- Image carousel -->
+        <v-window
+          v-model="currentImage[name]"
+          show-arrows
+        >
+          <v-window-item :value="0">
+            <ImageCard
+              title="Network Graph"
+              :imgUrl="getImgUrl(getLncRnaImgPaths(name).network)"
+            />
+          </v-window-item>
+          <v-window-item :value="1">
+            <ImageCard
+              title="Enrichment Graph"
+              :imgUrl="getImgUrl(getLncRnaImgPaths(name).enrichment)"
+            />
+          </v-window-item>
+        </v-window>
 
-    <v-card class="mt-4">
-      <v-card-title>Download Data Files</v-card-title>
-      <v-card-text>
-        <div class="d-flex flex-row ga-3">
+        <!-- Download buttons -->
+        <div class="d-flex flex-row ga-3 mt-3">
           <v-btn
             color="primary"
             prepend-icon="mdi-download"
-            :loading="downloadingEnr"
-            :disabled="!lncRna"
-            @click="downloadEnrichmentCsv"
+            :loading="downloadingEnr[name]"
+            @click="downloadEnrichmentCsv(name)"
           >
             Enrichment CSV
           </v-btn>
           <v-btn
             color="primary"
             prepend-icon="mdi-download"
-            :loading="downloadingConn"
-            :disabled="!lncRna"
-            @click="downloadConnectivityCsv"
+            :loading="downloadingConn[name]"
+            @click="downloadConnectivityCsv(name)"
           >
             Connectivity CSV
           </v-btn>
         </div>
-      </v-card-text>
-    </v-card>
-  </template>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>

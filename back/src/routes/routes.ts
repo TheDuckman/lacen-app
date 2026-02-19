@@ -45,6 +45,7 @@ router.get("/generateStackedBarplot", Controller.generateStackedBarplot);
 router.post("/generateHeatmap", Controller.generateHeatmap);
 router.get("/getHeatmapImgs", Controller.getHeatmapImgs);
 router.post("/generateRnaNetworkAnalysisFiles", Controller.generateRnaNetworkAnalysisFiles);
+router.get("/getLncRnaFolders", Controller.getLncRnaFolders);
 router.get("/downloadLncRnaFile", Controller.downloadLncRnaFile);
 
 export default router;

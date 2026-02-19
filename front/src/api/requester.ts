@@ -165,6 +165,11 @@ const generateRnaNetworkAnalysisFiles = async (
   return res.data;
 };
 
+const getLncRnaFolders = async (): Promise<string[]> => {
+  const res = await axios.get<string[]>('getLncRnaFolders');
+  return res.data;
+};
+
 const downloadLncRnaFile = async (
   lncrna: string,
   fileType: 'enr' | 'connectivity',
@@ -209,6 +214,7 @@ export default {
   generateStackedBarplot,
   generateHeatmap,
   generateRnaNetworkAnalysisFiles,
+  getLncRnaFolders,
   downloadLncRnaFile,
   // getHeatmapImgs,
 };
