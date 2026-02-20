@@ -12,6 +12,10 @@
       type: String,
       default: '',
     },
+    maxHeight: {
+      type: [Number, String],
+      default: undefined,
+    },
   });
 </script>
 
@@ -20,6 +24,7 @@
     <v-card-text>
       <v-img
         :src="imgUrl"
+        :max-height="maxHeight"
         contain
       >
         <div v-if="!imgUrl">

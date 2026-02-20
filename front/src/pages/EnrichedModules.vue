@@ -11,6 +11,7 @@
   import useEmitter from '@/composables/useEmitter';
   import { ToastTypes } from '@/constants/ui.constants';
   import { getImgUrl } from '@/utils/functions.utils';
+  import TheImageDialog from '@/components/TheImageDialog.vue';
 
   const userDataStore = useUserDataStore();
   const emitter = useEmitter();
@@ -20,6 +21,17 @@
 
   // List of heatmap images fetched from server
   const heatmapList = ref<HeatmapImgObj[]>([]);
+
+  // Dialog state
+  const dialogVisible = ref(false);
+  const dialogUrl = ref('');
+  const dialogTitle = ref('');
+
+  const openDialog = (img: HeatmapImgObj) => {
+    dialogUrl.value = getImgUrl(img.path) ?? '';
+    dialogTitle.value = parsePanelTitle(img.name);
+    dialogVisible.value = true;
+  };
 
   // Form
   const moduleNumber = ref();
@@ -122,28 +134,31 @@
     </v-card-text>
   </LacenCard>
 
-  <!-- One expansion panel per heatmap -->
-  <v-expansion-panels
+  <!-- Heatmap cards grid -->
+  <v-row
     v-if="heatmapList.length"
     class="mt-4"
-    multiple
-    variant="accordion"
   >
-    <v-expansion-panel
+    <v-col
       v-for="img in heatmapList"
       :key="img.name"
-      elevation="0"
-      style="border: 1px solid #ccc; margin-bottom: 4px"
+      cols="12"
+      sm="6"
+      lg="4"
     >
-      <v-expansion-panel-title>
-        {{ parsePanelTitle(img.name) }}
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-        <ImageCard
-          :title="parsePanelTitle(img.name)"
-          :imgUrl="getImgUrl(img.path)"
-        />
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
+      <ImageCard
+        :title="parsePanelTitle(img.name)"
+        :img-url="getImgUrl(img.path) ?? undefined"
+        max-height="220"
+        style="cursor: pointer"
+        @click="openDialog(img)"
+      />
+    </v-col>
+  </v-row>
+
+  <TheImageDialog
+    v-model="dialogVisible"
+    :url="dialogUrl"
+    :title="dialogTitle"
+  />
 </template>

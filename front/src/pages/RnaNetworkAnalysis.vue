@@ -8,6 +8,7 @@
   import useEmitter from '@/composables/useEmitter';
   import { ToastTypes } from '@/constants/ui.constants';
   import { getImgUrl } from '@/utils/functions.utils';
+  import TheImageDialog from '@/components/TheImageDialog.vue';
 
   const userDataStore = useUserDataStore();
   const emitter = useEmitter();
@@ -19,8 +20,16 @@
   const downloadingEnr = ref<Record<string, boolean>>({});
   const downloadingConn = ref<Record<string, boolean>>({});
 
-  // Per-panel current image slide index
-  const currentImage = ref<Record<string, number>>({});
+  // Dialog state
+  const dialogVisible = ref(false);
+  const dialogUrl = ref('');
+  const dialogTitle = ref('');
+
+  const openDialog = (url: string, title: string) => {
+    dialogUrl.value = url;
+    dialogTitle.value = title;
+    dialogVisible.value = true;
+  };
 
   // List of previously analyzed lncRNAs (folder names)
   const lncRnaList = ref<string[]>([]);
@@ -40,11 +49,6 @@
   const fetchFolders = async () => {
     const folders = await requester.getLncRnaFolders();
     lncRnaList.value = folders;
-    folders.forEach((name) => {
-      if (currentImage.value[name] === undefined) {
-        currentImage.value[name] = 0;
-      }
-    });
   };
 
   const generateLncRnaFiles = async () => {
@@ -178,24 +182,39 @@
         {{ name }}
       </v-expansion-panel-title>
       <v-expansion-panel-text>
-        <!-- Image carousel -->
-        <v-window
-          v-model="currentImage[name]"
-          show-arrows
-        >
-          <v-window-item :value="0">
+        <!-- Side-by-side thumbnails (each independently clickable) -->
+        <div class="d-flex flex-row ga-4">
+          <div style="flex: 0 0 48%">
             <ImageCard
               title="Network Graph"
-              :imgUrl="getImgUrl(getLncRnaImgPaths(name).network)"
+              :img-url="getImgUrl(getLncRnaImgPaths(name).network) ?? undefined"
+              max-height="300"
+              style="cursor: pointer"
+              @click="
+                openDialog(
+                  getImgUrl(getLncRnaImgPaths(name).network) ?? '',
+                  'Network Graph',
+                )
+              "
             />
-          </v-window-item>
-          <v-window-item :value="1">
+          </div>
+          <div style="flex: 0 0 48%">
             <ImageCard
               title="Enrichment Graph"
-              :imgUrl="getImgUrl(getLncRnaImgPaths(name).enrichment)"
+              :img-url="
+                getImgUrl(getLncRnaImgPaths(name).enrichment) ?? undefined
+              "
+              max-height="300"
+              style="cursor: pointer"
+              @click="
+                openDialog(
+                  getImgUrl(getLncRnaImgPaths(name).enrichment) ?? '',
+                  'Enrichment Graph',
+                )
+              "
             />
-          </v-window-item>
-        </v-window>
+          </div>
+        </div>
 
         <!-- Download buttons -->
         <div class="d-flex flex-row ga-3 mt-3">
@@ -221,4 +240,10 @@
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
+
+  <TheImageDialog
+    v-model="dialogVisible"
+    :url="dialogUrl"
+    :title="dialogTitle"
+  />
 </template>
