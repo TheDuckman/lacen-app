@@ -1,0 +1,12 @@
+services:
+  node:
+    container_name: lacen_back_node
+    image: gpato/lacen-app:4.0.0
+    restart: always
+    ports:
+      # Bind to loopback only — nginx is the public entry point
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - ./.env
+    volumes:
+      - "/home/ubuntu/lacen/saved-files:/opt/app/saved-files"

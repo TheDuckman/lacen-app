@@ -1,3 +1,9 @@
 saved-files
 lacen-base/dockerhub-auth.txt
 lacen-base/logs/*
+front/dist/*
+front/.env.production
+*.tsbuildinfo
+# Local deploy configs with real server values (not for public repo)
+deploy/setup.local.sh
+deploy/nginx/lacen-api.local.conf

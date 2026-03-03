@@ -87,7 +87,10 @@
 </script>
 
 <template>
-  <v-navigation-drawer v-model="drawerVisible">
+  <v-navigation-drawer
+    v-if="currentRoute !== 'MainPage'"
+    v-model="drawerVisible"
+  >
     <div class="d-flex justify-center">
       <v-switch
         v-model="lockSteps"

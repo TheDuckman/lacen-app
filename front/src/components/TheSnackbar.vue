@@ -10,7 +10,11 @@
   const text = ref();
   const timeout = ref();
 
-  const showToast = (options) => {
+  const showToast = (options: {
+    text: string | string[];
+    color?: string;
+    timeout?: number;
+  }) => {
     text.value = Array.isArray(options.text) ? options.text : [options.text];
     timeout.value = options.timeout ?? 3000;
     color.value = options.color ?? 'info';
